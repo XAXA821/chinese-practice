@@ -1,0 +1,493 @@
+<title>時代華語每日練習</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+<style>
+/* Layout: single column phone app, one task per screen, sticky step bar on top */
+:root{
+  --bg:#F4F7F6; --surface:#FFFFFF; --ink:#17302A; --muted:#5E7069; --line:#D9E3DF;
+  --accent:#1E6B57; --accent-ink:#FFFFFF; --accent-soft:#E2F0EB;
+  --ok:#1F7A3E; --ok-soft:#E3F4E8; --bad:#B4372F; --bad-soft:#FBE7E5; --warn:#8A5A00; --warn-soft:#FFF3D6;
+  --rec:#C2362C; --rec-ink:#FFFFFF;
+  --f-ui:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+  --f-han:"Noto Serif TC","PingFang TC","Songti TC",serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1A17; --surface:#16241F; --ink:#E4EEEA; --muted:#9AB0A8; --line:#2A3B35;
+  --accent:#5CC2A2; --accent-ink:#06231B; --accent-soft:#1D3A31;
+  --ok:#6FD38E; --ok-soft:#173826; --bad:#F08A80; --bad-soft:#3A1E1C; --warn:#F2C25B; --warn-soft:#3A2F14;
+  --rec:#E5574C; --rec-ink:#FFFFFF; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1A17; --surface:#16241F; --ink:#E4EEEA; --muted:#9AB0A8; --line:#2A3B35;
+  --accent:#5CC2A2; --accent-ink:#06231B; --accent-soft:#1D3A31;
+  --ok:#6FD38E; --ok-soft:#173826; --bad:#F08A80; --bad-soft:#3A1E1C; --warn:#F2C25B; --warn-soft:#3A2F14;
+  --rec:#E5574C; --rec-ink:#FFFFFF; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-ui);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 32px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:520px;margin:0 auto}
+button{font:inherit;color:inherit}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px 10px}
+.top-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.brand{font-weight:700;font-size:15px;letter-spacing:.02em}
+.who{font-size:14px;color:var(--muted);text-align:right}
+.steps{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:10px}
+.steps span{height:5px;border-radius:3px;background:var(--line)}
+.steps span.done{background:var(--accent)}
+.steps span.now{background:var(--accent);opacity:.45}
+.step-name{font-size:13px;color:var(--muted);margin-top:6px}
+
+.teacher{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.teacher button{border:1px solid currentColor;background:transparent;border-radius:6px;padding:2px 8px;font-size:13px;cursor:pointer;color:var(--warn)}
+.teacher button.on{background:var(--warn);color:var(--warn-soft)}
+
+h1{font-size:24px;line-height:1.3;margin:20px 0 6px;text-wrap:balance}
+.sub{color:var(--muted);font-size:15px;margin:0 0 16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.stack{display:flex;flex-direction:column;gap:12px}
+label{font-size:15px;font-weight:500}
+select,input[type=text]{width:100%;font:inherit;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:14px;font-weight:700;font-size:17px;background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{color:var(--bad);font-size:15px;min-height:1.4em}
+.note{font-size:14px;color:var(--muted)}
+.count{font-size:14px;color:var(--muted);margin:0 0 10px;font-variant-numeric:tabular-nums}
+
+.q{font-size:20px;font-weight:500;margin:4px 0 14px}
+.qhan{font-family:var(--f-han);font-size:56px;font-weight:700;line-height:1.2;text-align:center;margin:6px 0 16px}
+.listen-big{display:flex;justify-content:center;margin:6px 0 16px}
+.listen-big button{width:88px;height:88px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--accent);font-size:15px;font-weight:700;cursor:pointer}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:13px 14px;font-size:18px;cursor:pointer;color:var(--ink)}
+.opt.han{font-family:var(--f-han);font-size:24px;font-weight:600}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+.fb{margin-top:12px;font-size:16px;font-weight:500}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
+.tag{display:inline-block;font-size:12px;letter-spacing:.06em;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:6px;margin-bottom:8px}
+.passage{font-family:var(--f-han);font-size:20px;line-height:1.9;background:var(--accent-soft);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;min-height:48px}
+.answer{border:1.5px dashed var(--line);border-radius:12px;padding:10px;margin-bottom:12px}
+.tile{border:1.5px solid var(--accent);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 12px;font-size:19px;cursor:pointer;font-family:var(--f-han);font-weight:600}
+.answer .tile{background:var(--accent-soft)}
+.play{display:flex;gap:10px;margin-bottom:14px}
+.play .btn{flex:1}
+
+.recitem{display:flex;flex-direction:column;gap:10px}
+.recitem + .recitem{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.sent{font-family:var(--f-han);font-size:21px;line-height:1.7}
+.rbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.recbtn{border:0;border-radius:999px;padding:10px 18px;background:var(--rec);color:var(--rec-ink);font-weight:700;cursor:pointer}
+.recbtn.stop{background:var(--ink);color:var(--bg)}
+.small{border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer}
+.timer{font-variant-numeric:tabular-nums;color:var(--muted);font-size:15px}
+.okmark{color:var(--ok);font-weight:700;font-size:15px}
+audio{width:100%}
+.score{font-size:44px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;margin:8px 0}
+table.res{width:100%;border-collapse:collapse;font-size:16px}
+table.res td{padding:8px 4px;border-bottom:1px solid var(--line)}
+table.res td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+.week div{text-align:center;border-radius:10px;padding:8px 2px;font-size:13px;background:var(--bg);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.week b{display:block;font-size:20px;margin-top:2px}
+.week .y{background:var(--ok-soft);border-color:var(--ok)} .week .y b{color:var(--ok)}
+.week .n{background:var(--bad-soft);border-color:var(--bad)} .week .n b{color:var(--bad)}
+@media (prefers-reduced-motion: no-preference){.panel{animation:in .25s ease-out}@keyframes in{from{transform:translateY(6px);opacity:.6}to{transform:none;opacity:1}}}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div class="top-row"><div class="brand" id="brand">Modern Chinese Daily Practice</div><div class="who" id="who"></div></div>
+    <div class="steps" id="steps" hidden><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="step-name" id="stepName"></div>
+    <div class="teacher" id="teacher" hidden></div>
+  </div>
+  <main id="app"></main>
+</div>
+
+<script>
+/* ================= 設定 ================= */
+const CONFIG = {
+  API_URL: '',               // Google Apps Script 網址（設定後才會真的送出）
+  START_DATE: '2026-11-11',  // 第一天的日期
+  SWITCH_HOUR: 8,            // 每天幾點換新內容（台灣時間）
+  LESSON: 'L4'
+};
+const STUDENTS = ['詹凱','原莉花','柳美琪','珍妍','凌心','羅玥曦','李達欣','葉瑞安','安怡慈','煦晗運',
+  '凌霄志','維欣','泰叡','李芷妍','達西','柯安仁','若詩','林語晴','內齊蒙','艾卓然',
+  '王愉斐','天玲月','林凱','李莎晨','倪安妍','瑞安','許艾瑋','孝艾澤','潘芮昕','郭佳欣',
+  '江芷欣','施薇妍','王若仙','李紫心','林雅思','韓微','林心妍','王宇軒','林秋月','姬月隱'];
+
+/* ================= 生詞（第幾天開始考） ================= */
+const VOCAB = [
+ [1,'咖啡','kāfēi','coffee'],[1,'還是','háishì','or (in questions)'],[1,'天氣','tiānqì','weather'],[1,'熱','rè','hot'],[1,'冷','lěng','cold'],
+ [1,'飲料','yǐnliào','beverage'],[1,'也','yě','also; too'],[1,'餓','è','hungry'],[1,'渴','kě','thirsty'],
+ [2,'一點兒','yìdiǎnr','a little; a bit'],[2,'餐廳','cāntīng','restaurant'],[2,'太','tài','too (much)'],[2,'多','duō','many; much'],
+ [2,'少','shǎo','few; little'],[2,'麵','miàn','noodles'],[2,'好吃','hǎochī','delicious (food)'],[2,'好喝','hǎohē','tasty (drink)'],
+ [2,'最','zuì','most'],[2,'賣','mài','to sell'],[2,'牛肉麵','niúròu miàn','beef noodles'],
+ [3,'點','diǎn','to order (food)'],[3,'碗','wǎn','bowl'],[3,'杯','bēi','cup of'],[3,'瓶','píng','bottle of'],[3,'女','nǚ','female'],
+ [3,'男','nán','male'],[3,'位','wèi','(polite) measure word for people'],[3,'紅茶','hóngchá','black tea'],[3,'綠茶','lǜchá','green tea'],
+ [3,'請','qǐng','please'],[3,'給','gěi','to give'],[3,'一共','yígòng','altogether; in total'],[3,'多少','duōshǎo','how much; how many'],
+ [3,'找錢','zhǎoqián','to give change'],[3,'您','nín','you (polite)'],
+ [4,'百','bǎi','hundred'],[4,'千','qiān','thousand'],[4,'萬','wàn','ten thousand'],[4,'零','líng','zero'],
+ [4,'夏天','xiàtiān','summer'],[4,'春天','chūntiān','spring'],[4,'秋天','qiūtiān','autumn; fall'],[4,'冬天','dōngtiān','winter'],
+ [4,'商店','shāngdiàn','store; shop'],[4,'果汁','guǒzhī','juice'],[4,'牛奶','niúnǎi','milk'],[4,'有的','yǒude','some'],[4,'每','měi','every; each']
+].map(([d,h,p,e])=>({d,h,p,e}));
+
+/* ================= 每天的內容 =================
+   選擇題：[題目, 正確答案, 錯1, 錯2, 錯3]
+   重組：{g:語法點, t:[詞塊], a:[可接受的答案], end:標點} */
+const DAYS = [
+ /* 11/11 對話一（上） */
+ { fill:[['我很＿＿，想喝水。','渴','餓','也','還是'],['我很＿＿，想吃東西。','餓','渴','飲料','天氣'],['台北今天的＿＿怎麼樣？','天氣','飲料','咖啡','還是'],
+         ['他是老師＿＿學生？','還是','也','都','很'],['我喜歡喝茶，我朋友＿＿喜歡喝茶。','也','還是','都','很'],['今天＿＿冷！','好','還是','也','都']],
+   order:[{g:'也',t:['我','很渴，','也','很餓'],a:['我很渴，也很餓'],end:'。'},
+          {g:'還是',t:['你','要','咖啡','還是','茶'],a:['你要咖啡還是茶','你要茶還是咖啡'],end:'？'}],
+   reading:{text:'安娜今天很忙，她很渴，也很餓。她的朋友大衛問她：「你要喝咖啡還是茶？」安娜說：「我不要咖啡，也不要茶，我要喝水。」',
+     qs:[['安娜今天怎麼樣？','很渴，也很餓','不渴，也不餓','很冷','很熱'],['安娜要喝什麼？','水','咖啡','茶','咖啡和茶']]},
+   listen:{text:'今天天氣很熱，大衛很渴。他不想喝咖啡，他想喝茶。',
+     qs:[['今天天氣怎麼樣？','很熱','很冷','不熱','不冷'],['大衛想喝什麼？','茶','咖啡','水','都不想喝']]},
+   speak:{lines:['今天天氣好熱。','今天很冷，我想喝熱咖啡。','你要咖啡還是茶？'],ask:'你喜歡喝咖啡還是茶？為什麼？'} },
+
+ /* 11/12 對話一（下） */
+ { fill:[['這家＿＿的麵很好吃。','餐廳','飲料','天氣','咖啡'],['我想喝＿＿水。','一點兒','太','少','還是'],['這家店＿＿很多種水果。','賣','點','餓','最'],
+         ['咖啡、茶，我＿＿不喜歡。','都','也','還是','太'],['這個蛋糕太好吃＿＿！','了','嗎','呢','也'],['他很高，＿＿很帥。','也','還是','都','太']],
+   order:[{g:'也',t:['這家餐廳的麵','很好吃，','也','很便宜'],a:['這家餐廳的麵很好吃，也很便宜','這家餐廳的麵很便宜，也很好吃'],end:'。'},
+          {g:'還是',t:['你','想去','這家餐廳','還是','那家餐廳'],a:['你想去這家餐廳還是那家餐廳','你想去那家餐廳還是這家餐廳'],end:'？'},
+          {g:'Topic + 都',t:['咖啡、茶，','我','都','喜歡'],a:['咖啡、茶，我都喜歡'],end:'。'},
+          {g:'太……了',t:['今天','太','熱','了'],a:['今天太熱了'],end:'！'}],
+   reading:{text:'李先生最愛吃蛋糕。他常常去一家咖啡店，那家店賣蛋糕，也賣咖啡。那裡的蛋糕太好吃了！可是咖啡不好喝。',
+     qs:[['李先生最愛吃什麼？','蛋糕','牛肉麵','麵','水果'],['那家店的咖啡怎麼樣？','不好喝','太好喝了','很便宜','很貴']]},
+   listen:{text:'這家餐廳的麵很好吃，可是太少了。那家餐廳的麵很多，可是不好吃。',
+     qs:[['這家餐廳的麵怎麼樣？','很好吃，可是太少','很多，可是不好吃','不好吃','太貴'],['那家餐廳的麵怎麼樣？','很多，可是不好吃','很好吃，可是太少','很好吃','很便宜']]},
+   speak:{lines:['這家餐廳人太多。','他們的麵很好吃，也很便宜。','我最愛吃牛肉麵。'],ask:'你最愛吃什麼？為什麼？'} },
+
+ /* 11/13 對話二 */
+ { fill:[['我要一＿＿水。','瓶','碗','位','家'],['那＿＿老師是我們的中文老師。','位','碗','杯','瓶'],['這兩本書＿＿多少錢？','一共','每','最','有的'],
+         ['請＿＿我一杯紅茶。','給','點','賣','請'],['你要大杯＿＿小杯？','還是','也','都','很'],['我點綠茶，他＿＿點綠茶。','也','還是','都','太']],
+   order:[{g:'也',t:['我','點紅茶，','他','也','點紅茶'],a:['我點紅茶，他也點紅茶','他點紅茶，我也點紅茶'],end:'。'},
+          {g:'還是',t:['你們','要','紅茶','還是','綠茶'],a:['你們要紅茶還是綠茶','你們要綠茶還是紅茶'],end:'？'},
+          {g:'Topic + 都',t:['紅茶、綠茶，','我們','都','要'],a:['紅茶、綠茶，我們都要'],end:'。'},
+          {g:'太……了',t:['這碗麵','太','好吃','了'],a:['這碗麵太好吃了'],end:'！'}],
+   reading:{text:'王小姐和兩位朋友去餐廳。王小姐點了一碗麵，她的朋友都點了牛肉麵。他們也點了三杯紅茶和一瓶水。',
+     qs:[['他們一共點了幾碗麵？','三碗','一碗','兩碗','四碗'],['他們點了什麼飲料？','三杯紅茶和一瓶水','三杯綠茶','一杯紅茶和三瓶水','三瓶水']]},
+   listen:{text:'李先生和他的女朋友去餐廳。他們點了一碗牛肉麵、一碗麵和兩杯綠茶。',
+     qs:[['李先生和誰去餐廳？','女朋友','男朋友','老師','媽媽'],['他們點了什麼茶？','兩杯綠茶','兩杯紅茶','一杯綠茶','他們不要茶']]},
+   nums:[['兩百一十五','215','250','2,015','205'],['七百八十五','785','758','875','7,085']],
+   speak:{lines:['小姐，我們要點兩碗牛肉麵。','請問兩位要紅茶還是綠茶？','請問一共多少錢？'],ask:'你去餐廳常常點什麼？'} },
+
+ /* 11/14 數字、多、短文 */
+ { fill:[['我＿＿天都喝一杯咖啡。','每','有的','一共','最'],['這些書，＿＿很便宜，有的很貴。','有的','每','一共','多少'],['＿＿天天氣很冷。','冬','夏','每','有'],
+         ['3,050 怎麼說？','三千零五十','三千五十','三千零五','三千五百'],['這個杯子一百＿＿塊錢。','多','少','太','最'],['現在十一點＿＿。','多','少','太','了'],
+         ['11～19 個蛋糕：','十多個蛋糕','十個多蛋糕','多十個蛋糕','十個蛋糕多'],['$12～13：','十二塊多','十二多塊','多十二塊','十二塊錢多']],
+   nums:[['五千零八十','5,080','5,800','5,008','50,080'],['一萬零兩百','10,200','12,000','10,020','1,200'],['九萬零五百','90,500','95,000','9,500','90,050']],
+   order:[{g:'Numbers',t:['一共','兩千','零','五','塊'],a:['一共兩千零五塊'],end:'。'},
+          {g:'多 (more than)',t:['這個杯子','一百','多','塊錢'],a:['這個杯子一百多塊錢'],end:'。'},
+          {g:'多 (more than)',t:['他的孩子','四','歲','多'],a:['他的孩子四歲多'],end:'。'},
+          {g:'太……了',t:['冬天','太','冷','了'],a:['冬天太冷了'],end:'！'},
+          {g:'Topic + 都',t:['果汁、牛奶，','我','都','不喝'],a:['果汁、牛奶，我都不喝'],end:'。'}],
+   reading:{text:'大衛在台灣，他最喜歡春天。他說夏天太熱了，冬天太冷了。大衛每天早上都喝一杯牛奶，夏天他也喝很多果汁。',
+     qs:[['大衛最喜歡什麼時候？','春天','夏天','秋天','冬天'],['大衛每天早上喝什麼？','牛奶','果汁','咖啡','茶']]},
+   listen:{text:'一個杯子一百二十塊，兩個杯子兩百四十塊。我給店員五百塊，店員找我兩百六十塊。',
+     qs:[['兩個杯子一共多少錢？','兩百四十塊','一百二十塊','兩百六十塊','五百塊'],['店員找多少錢？','兩百六十塊','兩百四十塊','三百六十塊','一百二十塊']]},
+   speak:{lines:['一共兩百一十五塊錢。','台灣夏天的天氣很熱。','我每天都喝一杯牛奶。'],ask:'菲律賓的天氣怎麼樣？你最喜歡什麼時候？'} },
+
+ /* 11/15 綜合複習（一） */
+ { fill:[['你有＿＿個中文老師？','多少','一共','什麼','還是'],['這家＿＿的東西很便宜。','商店','牛奶','冬天','果汁'],['你要喝＿＿還是牛奶？','果汁','牛肉麵','麵','碗'],
+         ['12,000 怎麼說？','一萬兩千','一千兩百','一萬零兩百','十二萬'],['他喜歡喝綠茶，＿＿喜歡喝紅茶。','也','都','還是','太'],['牛肉麵、麵，他＿＿不想吃。','都','也','還是','最'],
+         ['21～29 朵花：','二十多朵花','二十朵多花','多二十朵花','二十朵花多'],['5～6 塊錢：','五塊多','五多塊','多五塊','五塊錢多']],
+   nums:[['兩萬三千五百零五','23,505','23,550','2,355','20,355'],['八百五','850','805','8,500','815'],['五十萬','500,000','50,000','5,000,000','5,000']],
+   order:[{g:'也',t:['這個杯子','很便宜，','那個杯子','也','很便宜'],a:['這個杯子很便宜，那個杯子也很便宜','那個杯子很便宜，這個杯子也很便宜'],end:'。'},
+          {g:'還是',t:['你','喜歡','夏天','還是','冬天'],a:['你喜歡夏天還是冬天','你喜歡冬天還是夏天'],end:'？'},
+          {g:'Topic + 都',t:['這兩個杯子，','我','都','想買'],a:['這兩個杯子，我都想買'],end:'。'},
+          {g:'太……了',t:['一千塊','太','貴','了'],a:['一千塊太貴了'],end:'！'},
+          {g:'Numbers',t:['一共','三百','零','八','塊'],a:['一共三百零八塊'],end:'。'},
+          {g:'多 (more than)',t:['他','有','二十','多','個','學生'],a:['他有二十多個學生'],end:'。'}],
+   reading:{text:'安娜買了兩本書和一枝筆。書一本三百五十塊，筆八十塊，一共七百八十塊。她給店員一千塊，店員找她兩百二十塊。',
+     qs:[['一本書多少錢？','三百五十塊','八十塊','七百八十塊','兩百二十塊'],['店員找安娜多少錢？','兩百二十塊','七百八十塊','三百五十塊','一千塊']]},
+   listen:{text:'我朋友不喜歡夏天，他說夏天太熱了。他最喜歡秋天。秋天的時候，他每天都去喝咖啡。',
+     qs:[['朋友最喜歡什麼時候？','秋天','夏天','冬天','春天'],['秋天的時候，他每天做什麼？','去喝咖啡','喝果汁','喝牛奶','不喝飲料']]},
+   speak:{lines:['這家店的牛肉麵太好吃了！','我要一杯紅茶，也要一碗麵。','這個杯子一百多塊錢。'],ask:'你常常買飲料嗎？一杯多少錢？'} },
+
+ /* 11/16 綜合複習（二） */
+ { fill:[['我最喜歡＿＿天，不冷也不熱。','秋','夏','冬','每'],['你想喝熱的＿＿冷的？','還是','也','都','太'],['我很渴，想喝＿＿果汁。','一點兒','太','最','每'],
+         ['兩杯紅茶一共八十＿＿塊錢。','多','少','太','了'],['2,500 怎麼說？','兩千五百','兩千零五百','兩千零五十','兩百五十'],['夏天＿＿熱了！','太','很','也','最'],
+         ['101～199 枝筆：','一百多枝筆','一百枝多筆','多一百枝筆','一百枝筆多'],['兩個＿＿星期（2～3 weeks）','多','少','了','太']],
+   nums:[['四萬零八十','40,080','40,800','4,080','48,000'],['三百零五萬','3,050,000','3,500,000','305,000','30,500,000'],['兩千零五','2,005','2,500','2,050','20,005']],
+   order:[{g:'也',t:['我','喜歡春天，','也','喜歡秋天'],a:['我喜歡春天，也喜歡秋天','我喜歡秋天，也喜歡春天'],end:'。'},
+          {g:'還是',t:['你','想喝','果汁','還是','牛奶'],a:['你想喝果汁還是牛奶','你想喝牛奶還是果汁'],end:'？'},
+          {g:'Topic + 都',t:['牛肉麵、蛋糕，','他','都','很喜歡'],a:['牛肉麵、蛋糕，他都很喜歡'],end:'。'},
+          {g:'太……了',t:['這家店的飲料','太','便宜','了'],a:['這家店的飲料太便宜了'],end:'！'},
+          {g:'Numbers',t:['這支手機','一萬','三千','五百','塊'],a:['這支手機一萬三千五百塊'],end:'。'},
+          {g:'多 (more than)',t:['現在','十一點','多'],a:['現在十一點多'],end:'。'}],
+   reading:{text:'這家商店賣很多東西，有的很便宜，有的很貴。一瓶水二十多塊，一個杯子三百多塊。王先生買了一瓶水和一個杯子。',
+     qs:[['一個杯子多少錢？','三百多塊','二十多塊','三十塊','三千多塊'],['這家商店的東西怎麼樣？','有的便宜，有的貴','都很便宜','都很貴','只賣水']]},
+   listen:{text:'那家商店的果汁很好喝，一杯五十多塊。牛奶也很好喝，一瓶八十多塊。',
+     qs:[['果汁一杯多少錢？','五十多塊','八十多塊','十五塊','五百多塊'],['牛奶一瓶多少錢？','八十多塊','五十多塊','十八塊','八百多塊']]},
+   speak:{lines:['我最愛喝果汁。','這家店的東西，有的很便宜，有的很貴。','一杯紅茶二十多塊錢。'],ask:'你最喜歡哪家餐廳或飲料店？那裡的東西怎麼樣？多少錢？'} }
+];
+
+/* ================= 工具 ================= */
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const STEP_NAMES = ['Vocabulary','Multiple Choice','Sentence Order','Reading','Listening','Recording'];
+const WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function rng(seedStr){let h=2166136261;for(const c of seedStr){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return()=>{h+=0x6D2B79F5;let t=h;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function shuffle(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function dateOf(i){const [y,m,d]=CONFIG.START_DATE.split('-').map(Number);const t=new Date(Date.UTC(y,m-1,d+i));return{iso:t.toISOString().slice(0,10),label:`${WD[t.getUTCDay()]} ${t.getUTCMonth()+1}/${t.getUTCDate()}`,short:`${t.getUTCMonth()+1}/${t.getUTCDate()}`}}
+function dayIndexNow(){
+  const shifted=new Date(Date.now()+8*3600e3-CONFIG.SWITCH_HOUR*3600e3);
+  const today=Date.UTC(shifted.getUTCFullYear(),shifted.getUTCMonth(),shifted.getUTCDate());
+  const [y,m,d]=CONFIG.START_DATE.split('-').map(Number);
+  return Math.round((today-Date.UTC(y,m-1,d))/86400e3);
+}
+const PREVIEW = !CONFIG.API_URL || location.hash==='#preview';
+
+let voice=null;
+function pickVoice(){const vs=speechSynthesis.getVoices();voice=vs.find(v=>/zh[-_]TW/i.test(v.lang))||vs.find(v=>/^zh/i.test(v.lang))||null}
+if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+function speak(text,rate=0.85){
+  if(!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);u.lang='zh-TW';if(voice)u.voice=voice;u.rate=rate;speechSynthesis.speak(u);
+}
+
+/* ================= 狀態 ================= */
+const S={name:store.get('pr_name')||'',day:0,step:-1,results:[],recs:{}};
+
+function header(){
+  $('#brand').textContent=`Modern Chinese ${CONFIG.LESSON} · ${dateOf(S.day).label}`;
+  $('#who').textContent=S.name||'';
+  const st=$('#steps');st.hidden=S.step<0||S.step>5;
+  [...st.children].forEach((el,i)=>{el.className=i<S.step?'done':i===S.step?'now':''});
+  $('#stepName').textContent=S.step>=0&&S.step<=5?`Step ${S.step+1} of 6 · ${STEP_NAMES[S.step]}`:'';
+}
+function teacherBar(){
+  const t=$('#teacher');if(!PREVIEW){t.hidden=true;return}
+  t.hidden=false;
+  t.innerHTML='<span>Teacher preview (nothing is submitted)</span>'+DAYS.map((_,i)=>`<button type="button" data-d="${i}" class="${i===S.day?'on':''}">${dateOf(i).short}</button>`).join('');
+  t.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.day=+b.dataset.d;S.results=[];S.recs={};teacherBar();renderLogin()});
+}
+
+/* ================= 登入 ================= */
+function renderLogin(){
+  S.step=-1;header();
+  const opts=STUDENTS.map(n=>`<option value="${esc(n)}" ${n===S.name?'selected':''}>${esc(n)}</option>`).join('');
+  app.innerHTML=`<h1>Practice for ${dateOf(S.day).label}</h1><p class="sub">About 10–15 minutes: Vocabulary → Multiple Choice → Sentence Order → Reading → Listening → Recording.</p>
+  <form class="panel stack" id="f">
+    <label for="sel">1. Choose your name</label>
+    <select id="sel"><option value="">— Select —</option>${opts}</select>
+    <label for="typed">2. Type your name again</label>
+    <input id="typed" type="text" autocomplete="off" placeholder="e.g. 詹凱">
+    <div class="err" id="err"></div>
+    <button class="btn" type="submit">Start</button>
+  </form>
+  <p class="note">Open this page in Chrome or Safari, not inside LINE or Messenger, so recording works.</p>`;
+  $('#f').onsubmit=async e=>{
+    e.preventDefault();
+    const a=$('#sel').value,b=$('#typed').value.trim();
+    if(!a){$('#err').textContent='Please choose your name.';return}
+    if(a!==b){$('#err').textContent='The two names do not match. Please check again.';return}
+    S.name=a;store.set('pr_name',a);
+    if(!PREVIEW){
+      try{const r=await fetch(`${CONFIG.API_URL}?action=week&name=${encodeURIComponent(a)}`);const j=await r.json();
+        if((j.dates||[]).includes(dateOf(S.day).iso)){S.step=6;header();app.innerHTML=`<h1>You’re done for today</h1><div class="panel"><p>${esc(a)}, today’s practice has been submitted. New practice opens tomorrow at ${CONFIG.SWITCH_HOUR}:00 a.m.</p>${weekHTML(j.dates)}</div>`;return}}catch(err){}
+    }
+    S.results=[];S.recs={};
+    runQuiz(0,vocabQs());
+  };
+}
+
+/* ================= 1. 生詞測驗（自動出 20 題） ================= */
+function vocabQs(){
+  const r=rng(S.name+'v'+S.day), d=S.day+1;
+  const pool=VOCAB.filter(v=>v.d<=d), fresh=pool.filter(v=>v.d===d), old=pool.filter(v=>v.d<d);
+  let pick=[];
+  const review=d>4;   // 最後兩天：整課綜合複習
+  if(!review){pick=shuffle(fresh,r).concat(shuffle(fresh,r));}   // 今天的新詞出現兩次
+  pick=pick.concat(shuffle(review?pool:old,r)).slice(0,15);
+  while(pick.length<15)pick.push(pool[Math.floor(r()*pool.length)]);
+  const formats=[['h','p'],['h','e'],['a','h'],['a','e'],['a','p'],['e','h'],['p','h']];
+  const used=new Set();
+  return shuffle(pick,r).map((v,i)=>{
+    let f;for(let k=0;k<10;k++){f=formats[Math.floor(r()*formats.length)];if(!used.has(v.h+f))break}
+    used.add(v.h+f);
+    const [show,ans]=f, key={h:'h',p:'p',e:'e'}[ans];
+    const others=shuffle(pool.filter(o=>o.h!==v.h&&o[key]!==v[key]),r).concat(shuffle(VOCAB.filter(o=>o.d>d&&o[key]!==v[key]),r));
+    const wrong=[];for(const o of others){if(!wrong.includes(o[key]))wrong.push(o[key]);if(wrong.length===3)break}
+    const prompt={h:ans==='p'?'Choose the pinyin.':'Choose the meaning.',a:'Listen and choose the '+(ans==='h'?'characters':ans==='p'?'pinyin':'meaning')+'.',e:'Choose the characters.',p:'Choose the characters.'}[show];
+    return{type:'mc',sec:'生詞',q:prompt,show,word:v,ans:v[key],wrong,ansKind:ans,id:'v'+i};
+  });
+}
+
+/* ================= 共用：選擇題流程 ================= */
+function sectionQs(step){
+  const D=DAYS[S.day];
+  const mc=(q,extra)=>Object.assign({type:'mc',q:q[0],ans:q[1],wrong:q.slice(2)},extra);
+  if(step===1)return D.fill.map(q=>mc(q,{sec:'填空'})).concat((D.nums||[]).map(q=>({type:'mc',sec:'填空',q:'Listen and choose the number.',say:q[0],ans:q[1],wrong:q.slice(2)})));
+  if(step===2)return D.order.map(o=>({type:'order',sec:'重組',o}));
+  if(step===3)return D.reading.qs.map(q=>mc(q,{sec:'閱讀',passage:D.reading.text}));
+  if(step===4)return D.listen.qs.map(q=>mc(q,{sec:'聽力',listen:D.listen.text}));
+}
+function runQuiz(step,qs){
+  S.step=step;header();
+  if(step>=1&&step<=2)qs=shuffle(qs,rng(S.name+'s'+step+S.day));
+  let i=0;
+  const next=()=>{i++;if(i<qs.length)draw();else if(step<4)runQuiz(step+1,sectionQs(step+1));else renderSpeak()};
+  function draw(){
+    const it=qs[i];
+    let head=`<h1>${STEP_NAMES[step]}</h1><div class="count">Question ${i+1} of ${qs.length}</div>`;
+    if(it.passage)head+=`<div class="passage">${esc(it.passage)}</div>`;
+    if(it.listen)head+=`<div class="play"><button class="btn" id="pl" type="button">▶ Play</button><button class="btn ghost" id="pls" type="button">▶ Slow</button></div>`;
+    if(it.type==='order')return drawOrder(it,head);
+    let stim='';
+    if(it.show==='h')stim=`<div class="qhan">${esc(it.word.h)}</div>`;
+    else if(it.show==='e')stim=`<div class="q" style="text-align:center;font-size:24px">${esc(it.word.e)}</div>`;
+    else if(it.show==='p')stim=`<div class="q" style="text-align:center;font-size:28px">${esc(it.word.p)}</div>`;
+    else if(it.show==='a'||it.say)stim=`<div class="listen-big"><button type="button" id="sayw">🔊 Play</button></div>`;
+    const opts=shuffle([it.ans,...it.wrong],rng(S.name+it.q+it.ans+i));
+    const hanOpt=it.ansKind==='h';
+    app.innerHTML=head+`<div class="panel"><div class="q">${esc(it.q)}</div>${stim}<div class="opts">${opts.map((o,k)=>`<button class="opt${hanOpt?' han':''}" type="button" data-k="${k}">${esc(o)}</button>`).join('')}</div><div class="fb" id="fb"></div><div id="nx"></div></div>`;
+    if(it.listen){$('#pl').onclick=()=>speak(it.listen,0.85);$('#pls').onclick=()=>speak(it.listen,0.6)}
+    if(it.show==='a'){$('#sayw').onclick=()=>speak(it.word.h,0.75);speak(it.word.h,0.75)}
+    if(it.say){$('#sayw').onclick=()=>speak(it.say,0.75);speak(it.say,0.75)}
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const pick=opts[+b.dataset.k],ok=pick===it.ans;
+      S.results.push({sec:it.sec,q:it.word?it.word.h:(it.say||it.q),pick,ok});
+      app.querySelectorAll('.opt').forEach(x=>{x.disabled=true;const v=opts[+x.dataset.k];if(v===it.ans)x.classList.add('ok');else if(x===b)x.classList.add('bad')});
+      let fb=ok?'Correct!':'Answer: '+it.ans;
+      if(it.word)fb+=`　${it.word.h}・${it.word.p}・${it.word.e}`;
+      if(it.say)fb+=`　（${it.say}）`;
+      $('#fb').className='fb '+(ok?'ok':'bad');$('#fb').textContent=fb;
+      if(it.listen&&i===qs.length-1)$('#fb').insertAdjacentHTML('afterend',`<p class="note">Transcript: ${esc(it.listen)}</p>`);
+      $('#nx').innerHTML='<button class="btn" type="button" style="margin-top:14px">Next</button>';$('#nx').firstChild.onclick=next;
+    });
+  }
+  function drawOrder(it,head){
+    const o=it.o;
+    const pool=shuffle(o.t.map((t,k)=>({t,k})),rng(S.name+o.t.join('')));
+    let picked=[];
+    function paint(){
+      const left=pool.filter(p=>!picked.includes(p));
+      app.innerHTML=head+`<div class="panel"><span class="tag">Grammar: ${esc(o.g)}</span><div class="q">Tap the words to make a correct sentence.</div>
+      <div class="answer"><div class="tiles">${picked.map((p,k)=>`<button class="tile" data-a="${k}" type="button">${esc(p.t)}</button>`).join('')}</div></div>
+      <div class="tiles">${left.map(p=>`<button class="tile" data-p="${p.k}" type="button">${esc(p.t)}</button>`).join('')}</div>
+      <div class="fb" id="fb"></div><div id="nx"><button class="btn" id="chk" type="button" style="margin-top:14px" ${left.length?'disabled':''}>Check</button></div></div>`;
+      app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{picked.push(pool.find(p=>p.k===+b.dataset.p));paint()});
+      app.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{picked.splice(+b.dataset.a,1);paint()});
+      $('#chk').onclick=()=>{
+        const s=picked.map(p=>p.t).join(''),ok=o.a.includes(s);
+        S.results.push({sec:'重組',q:o.g,pick:s,ok});
+        app.querySelectorAll('.tile').forEach(x=>x.disabled=true);
+        $('#fb').className='fb '+(ok?'ok':'bad');$('#fb').textContent=ok?'Correct!':'Answer: '+o.a[0]+o.end;
+        $('#nx').innerHTML='<button class="btn" type="button" style="margin-top:14px">Next</button>';$('#nx').firstChild.onclick=next;
+      };
+    }
+    paint();
+  }
+  draw();
+}
+
+/* ================= 6. 錄音：朗讀 3 句＋回答 1 題 ================= */
+function renderSpeak(){
+  S.step=5;header();
+  const sp=DAYS[S.day].speak;
+  const items=sp.lines.map((l,k)=>({id:'read'+(k+1),label:`Read aloud ${k+1}`,text:l})).concat([{id:'answer',label:'Answer the question',text:sp.ask,ask:true}]);
+  app.innerHTML=`<h1>Recording</h1><p class="sub">Record each item separately. You can listen and re-record. Submit opens after all four are recorded.</p>
+  <div class="panel">${items.map(it=>`<div class="recitem" id="ri-${it.id}"><span class="tag">${it.label}</span><div class="sent">${it.ask?'<span class="note">Answer in Chinese:</span><br>':''}${esc(it.text)}</div><div class="rbar" id="rb-${it.id}"></div></div>`).join('')}</div>
+  <div style="margin-top:16px"><button class="btn" id="send" type="button" disabled>Submit</button>${PREVIEW?'<p class="note">Teacher preview: you can submit without recording to see the results page.</p>':''}<div class="err" id="err"></div></div>`;
+  let active=null;
+  const canMic=!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder);
+  function refresh(){$('#send').disabled=!PREVIEW&&!items.every(it=>S.recs[it.id])}
+  function idle(it){
+    const box=$('#rb-'+it.id),done=S.recs[it.id];
+    if(done){
+      box.innerHTML=`<audio controls src="${URL.createObjectURL(done)}"></audio><span class="okmark">✓ Recorded</span><button class="small" type="button" data-re>Re-record</button>`;
+      box.querySelector('[data-re]').onclick=()=>{delete S.recs[it.id];refresh();idle(it)};
+    }else{
+      box.innerHTML=`<button class="recbtn" type="button" data-go>● Record</button><span class="timer">Not recorded yet</span>`;
+      box.querySelector('[data-go]').onclick=()=>start(it);
+    }
+    refresh();
+  }
+  async function start(it){
+    if(active)return;
+    if(!canMic)return fallback(it);
+    let stream;try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){return fallback(it)}
+    const type=['audio/mp4','audio/webm;codecs=opus','audio/webm'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+    let mr;try{mr=new MediaRecorder(stream,type?{mimeType:type}:undefined)}catch(e){stream.getTracks().forEach(t=>t.stop());return fallback(it)}
+    const chunks=[];active=mr;
+    mr.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+    const box=$('#rb-'+it.id);const t0=Date.now();
+    box.innerHTML=`<button class="recbtn stop" type="button" data-st>■ Stop</button><span class="timer">0:00</span>`;
+    const tm=box.querySelector('.timer');
+    const tick=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);tm.textContent=`Recording ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;if(s>=90)mr.stop()},250);
+    mr.onstop=()=>{clearInterval(tick);stream.getTracks().forEach(t=>t.stop());active=null;S.recs[it.id]=new Blob(chunks,{type:mr.mimeType||'audio/webm'});idle(it)};
+    box.querySelector('[data-st]').onclick=()=>mr.stop();
+    mr.start();
+  }
+  function fallback(it){
+    const box=$('#rb-'+it.id);
+    box.innerHTML=`<span class="note">Recording is not available here. Record on your phone first, then choose the file:</span><input type="file" accept="audio/*" capture id="file-${it.id}" aria-label="Choose a recording">`;
+    box.querySelector('input').onchange=e=>{const f=e.target.files[0];if(f){S.recs[it.id]=f;idle(it)}};
+  }
+  items.forEach(idle);
+  $('#send').onclick=()=>submit(items);
+}
+
+function toB64(blob){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(',')[1]);fr.onerror=rej;fr.readAsDataURL(blob)})}
+async function submit(items){
+  const btn=$('#send');btn.disabled=true;btn.textContent='Submitting…';
+  const score=S.results.filter(r=>r.ok).length,total=S.results.length;
+  if(PREVIEW){return renderDone(score,total,null)}
+  try{
+    const audios=[];for(const it of items){const b=S.recs[it.id];audios.push({label:it.label,b64:await toB64(b),mime:b.type||'audio/mpeg'})}
+    const body=JSON.stringify({name:S.name,date:dateOf(S.day).iso,lesson:CONFIG.LESSON,score,total,results:S.results,audios});
+    const r=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
+    const j=await r.json();if(!j.ok)throw new Error(j.error||'error');
+    renderDone(score,total,j.dates||[dateOf(S.day).iso]);
+  }catch(e){
+    btn.disabled=false;btn.textContent='Try again';
+    $('#err').textContent='Not sent. Check your internet connection and try again.';
+  }
+}
+
+/* ================= 完成＋本週繳交紀錄 ================= */
+function weekHTML(dates){
+  const done=new Set(dates||[]);const today=S.day;let n=0;
+  const cells=DAYS.map((_,i)=>{const d=dateOf(i);const y=done.has(d.iso);if(y)n++;
+    const cls=y?'y':(i<today||(i===today&&false))?'n':'';const mark=y?'1':i<today?'0':'–';
+    return`<div class="${cls}">${d.short}<b>${mark}</b></div>`}).join('');
+  const past=Math.min(today+1,DAYS.length);
+  return`<h2 style="font-size:18px;margin:18px 0 0">This week</h2><p class="note" style="margin:4px 0 0">1 = submitted, 0 = missed. So far: ${n} submitted, ${past-n} missed.</p><div class="week">${cells}</div>`;
+}
+function renderDone(score,total,dates){
+  S.step=6;header();
+  const secs=['生詞','填空','重組','閱讀','聽力'].map(s=>{const rs=S.results.filter(r=>r.sec===s);return`<tr><td>${{生詞:'Vocabulary',填空:'Multiple Choice',重組:'Sentence Order',閱讀:'Reading',聽力:'Listening'}[s]}</td><td>${rs.filter(r=>r.ok).length} / ${rs.length}</td></tr>`}).join('');
+  const preview=dates===null;
+  if(preview){dates=[];for(let i=0;i<=S.day;i++)if(i!==1)dates.push(dateOf(i).iso)}
+  app.innerHTML=`<h1>Done for today!</h1><div class="panel"><div class="score">${score} / ${total}</div>
+  <table class="res">${secs}<tr><td>Recording</td><td>4 submitted</td></tr></table>
+  ${weekHTML(dates)}
+  ${preview?'<p class="note">Teacher preview: this week’s record is sample data (day 2 marked as missed). Nothing was submitted.</p>':''}
+  <p class="note">New practice opens tomorrow at ${CONFIG.SWITCH_HOUR}:00 a.m. See you tomorrow.</p></div>`;
+}
+
+/* ================= 開始 ================= */
+(function boot(){
+  const idx=dayIndexNow();
+  if(PREVIEW){S.day=Math.min(Math.max(idx,0),DAYS.length-1);teacherBar();renderLogin();return}
+  if(idx<0){S.day=0;header();app.innerHTML=`<h1>Practice has not started yet</h1><div class="panel"><p>The first day is ${dateOf(0).label} at ${CONFIG.SWITCH_HOUR}:00 a.m.</p></div>`;return}
+  if(idx>=DAYS.length){S.day=DAYS.length-1;header();app.innerHTML=`<h1>This lesson’s practice has ended</h1><div class="panel"><p>Your teacher will share the next lesson soon.</p></div>`;return}
+  S.day=idx;renderLogin();
+})();
+</script>
