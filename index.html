@@ -94,7 +94,7 @@ audio{width:100%}
 table.res{width:100%;border-collapse:collapse;font-size:16px}
 table.res td{padding:8px 4px;border-bottom:1px solid var(--line)}
 table.res td:last-child{text-align:right;font-variant-numeric:tabular-nums}
-.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+.week{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:10px}
 .week div{text-align:center;border-radius:10px;padding:8px 2px;font-size:13px;background:var(--bg);border:1px solid var(--line);font-variant-numeric:tabular-nums}
 .week b{display:block;font-size:20px;margin-top:2px}
 .week .y{background:var(--ok-soft);border-color:var(--ok)} .week .y b{color:var(--ok)}
@@ -116,122 +116,110 @@ table.res td:last-child{text-align:right;font-variant-numeric:tabular-nums}
 /* ================= 設定 ================= */
 const CONFIG = {
   API_URL: 'https://script.google.com/macros/s/AKfycby3QLm7OD5-xruxWy-pr_12xq8ZhENa4mzEWaO8kEF68vSkjDLa533AUTqb6XXJXrc1/exec',               // Google Apps Script 網址（設定後才會真的送出）
-  START_DATE: '2026-11-11',  // 第一天的日期
+  START_DATE: '2026-11-18',  // 第一天的日期
   SWITCH_HOUR: 8,            // 每天幾點換新內容（台灣時間）
-  LESSON: 'L4'
+  LESSON: 'L5'
 };
 const STUDENTS = ['詹凱','原莉花','柳美琪','珍妍','凌心','羅玥曦','李達欣','葉瑞安','安怡慈','煦晗運',
   '凌霄志','維欣','泰叡','李芷妍','達西','柯安仁','若詩','林語晴','內齊蒙','艾卓然',
   '王愉斐','天玲月','林凱','李莎晨','倪安妍','瑞安','許艾瑋','孝艾澤','潘芮昕','郭佳欣',
   '江芷欣','施薇妍','王若仙','李紫心','林雅思','韓微','林心妍','王宇軒','林秋月','姬月隱'];
 
-/* ================= 生詞（第幾天開始考） ================= */
+/* ================= 生詞 =================
+   g: 1=對話一  2=對話二  3=短文  p=前一課（L4） */
 const VOCAB = [
- [1,'咖啡','kāfēi','coffee'],[1,'還是','háishì','or (in questions)'],[1,'天氣','tiānqì','weather'],[1,'熱','rè','hot'],[1,'冷','lěng','cold'],
- [1,'飲料','yǐnliào','beverage'],[1,'也','yě','also; too'],[1,'餓','è','hungry'],[1,'渴','kě','thirsty'],
- [2,'一點兒','yìdiǎnr','a little; a bit'],[2,'餐廳','cāntīng','restaurant'],[2,'太','tài','too (much)'],[2,'多','duō','many; much'],
- [2,'少','shǎo','few; little'],[2,'麵','miàn','noodles'],[2,'好吃','hǎochī','delicious (food)'],[2,'好喝','hǎohē','tasty (drink)'],
- [2,'最','zuì','most'],[2,'賣','mài','to sell'],[2,'牛肉麵','niúròu miàn','beef noodles'],
- [3,'點','diǎn','to order (food)'],[3,'碗','wǎn','bowl'],[3,'杯','bēi','cup of'],[3,'瓶','píng','bottle of'],[3,'女','nǚ','female'],
- [3,'男','nán','male'],[3,'位','wèi','(polite) measure word for people'],[3,'紅茶','hóngchá','black tea'],[3,'綠茶','lǜchá','green tea'],
- [3,'請','qǐng','please'],[3,'給','gěi','to give'],[3,'一共','yígòng','altogether; in total'],[3,'多少','duōshǎo','how much; how many'],
- [3,'找錢','zhǎoqián','to give change'],[3,'您','nín','you (polite)'],
- [4,'百','bǎi','hundred'],[4,'千','qiān','thousand'],[4,'萬','wàn','ten thousand'],[4,'零','líng','zero'],
- [4,'夏天','xiàtiān','summer'],[4,'春天','chūntiān','spring'],[4,'秋天','qiūtiān','autumn; fall'],[4,'冬天','dōngtiān','winter'],
- [4,'商店','shāngdiàn','store; shop'],[4,'果汁','guǒzhī','juice'],[4,'牛奶','niúnǎi','milk'],[4,'有的','yǒude','some'],[4,'每','měi','every; each']
-].map(([d,h,p,e])=>({d,h,p,e}));
+ [1,'錢包','qiánbāo','wallet'],[1,'在','zài','to be (at a place)'],[1,'哪裡','nǎlǐ','where'],[1,'聽','tīng','to listen'],[1,'音樂','yīnyuè','music'],
+ [1,'有空','yǒukòng','free; available'],[1,'下午茶','xiàwǔ chá','afternoon tea'],[1,'不錯','búcuò','not bad; pretty good'],[1,'咖啡廳','kāfēitīng','café'],
+ [1,'那裡','nàlǐ','there'],[1,'這裡','zhèlǐ','here'],[1,'冰淇淋','bīngqílín','ice cream'],[1,'巧克力','qiǎokèlì','chocolate'],[1,'半','bàn','half'],[1,'吧','ba','(particle for suggestions)'],
+ [2,'跟','gēn','and; with'],[2,'可是','kěshì','but'],[2,'房間','fángjiān','room'],[2,'房子','fángzi','house'],[2,'裡面','lǐmiàn','inside'],[2,'外面','wàimiàn','outside'],
+ [2,'客廳','kètīng','living room'],[2,'桌子','zhuōzi','table'],[2,'椅子','yǐzi','chair'],[2,'張','zhāng','measure word for tables, chairs'],[2,'上面','shàngmiàn','on; above'],
+ [2,'哥哥','gēge','older brother'],[2,'姐姐','jiějie','older sister'],[2,'弟弟','dìdi','younger brother'],[2,'妹妹','mèimei','younger sister'],[2,'沙發','shāfā','sofa'],
+ [2,'下面','xiàmiàn','under; below'],[2,'旁邊','pángbiān','next to'],[2,'前面','qiánmiàn','in front of'],[2,'後面','hòumiàn','behind'],[2,'幫','bāng','to help'],
+ [2,'找','zhǎo','to look for'],[2,'廚房','chúfáng','kitchen'],[2,'再','zài','again'],
+ [3,'床','chuáng','bed'],[3,'家具','jiājù','furniture'],[3,'電視','diànshì','TV'],[3,'窗戶','chuānghù','window'],[3,'門','mén','door'],[3,'貓','māo','cat'],
+ [3,'狗','gǒu','dog'],[3,'鳥','niǎo','bird'],[3,'隻','zhī','measure word for animals'],[3,'太陽','tàiyáng','sun'],[3,'曬太陽','shài tàiyáng','to sunbathe'],
+ ['p','咖啡','kāfēi','coffee'],['p','還是','háishì','or (in questions)'],['p','天氣','tiānqì','weather'],['p','熱','rè','hot'],['p','冷','lěng','cold'],
+ ['p','飲料','yǐnliào','beverage'],['p','餓','è','hungry'],['p','渴','kě','thirsty'],['p','餐廳','cāntīng','restaurant'],['p','太','tài','too (much)'],
+ ['p','少','shǎo','few; little'],['p','好吃','hǎochī','delicious (food)'],['p','好喝','hǎohē','tasty (drink)'],['p','最','zuì','most'],['p','賣','mài','to sell'],
+ ['p','牛肉麵','niúròu miàn','beef noodles'],['p','點','diǎn','to order (food)'],['p','碗','wǎn','bowl'],['p','杯','bēi','cup of'],['p','瓶','píng','bottle of'],
+ ['p','紅茶','hóngchá','black tea'],['p','綠茶','lǜchá','green tea'],['p','給','gěi','to give'],['p','一共','yígòng','altogether'],['p','多少','duōshǎo','how much; how many'],
+ ['p','找錢','zhǎoqián','to give change'],['p','百','bǎi','hundred'],['p','千','qiān','thousand'],['p','萬','wàn','ten thousand'],['p','零','líng','zero'],
+ ['p','夏天','xiàtiān','summer'],['p','冬天','dōngtiān','winter'],['p','商店','shāngdiàn','store; shop'],['p','果汁','guǒzhī','juice'],['p','牛奶','niúnǎi','milk'],
+ ['p','有的','yǒude','some'],['p','每','měi','every; each']
+].map(([g,h,p,e])=>({g,h,p,e}));
+/* 每天考哪些生詞、哪一組是當天重點 */
+const DAY_POOLS = [{pool:[1],focus:1},{pool:[2],focus:2},{pool:[1,2,3],focus:3},{pool:[1,2,3],focus:null},{pool:[1,2,3,'p'],focus:null},{pool:[1,2,3,'p'],focus:null}];
+const N_VOCAB = 8;
 
 /* ================= 每天的內容 =================
    選擇題：[題目, 正確答案, 錯1, 錯2, 錯3]
    重組：{g:語法點, t:[詞塊], a:[可接受的答案], end:標點} */
 const DAYS = [
- /* 11/11 對話一（上） */
- { fill:[['我很＿＿，想喝水。','渴','餓','也','還是'],['我很＿＿，想吃東西。','餓','渴','飲料','天氣'],['台北今天的＿＿怎麼樣？','天氣','飲料','咖啡','還是'],
-         ['他是老師＿＿學生？','還是','也','都','很'],['我喜歡喝茶，我朋友＿＿喜歡喝茶。','也','還是','都','很'],['今天＿＿冷！','好','還是','也','都']],
-   order:[{g:'也',t:['我','很渴，','也','很餓'],a:['我很渴，也很餓'],end:'。'},
-          {g:'還是',t:['你','要','咖啡','還是','茶'],a:['你要咖啡還是茶','你要茶還是咖啡'],end:'？'}],
-   reading:{text:'安娜今天很忙，她很渴，也很餓。她的朋友大衛問她：「你要喝咖啡還是茶？」安娜說：「我不要咖啡，也不要茶，我要喝水。」',
-     qs:[['安娜今天怎麼樣？','很渴，也很餓','不渴，也不餓','很冷','很熱'],['安娜要喝什麼？','水','咖啡','茶','咖啡和茶']]},
-   listen:{text:'今天天氣很熱，大衛很渴。他不想喝咖啡，他想喝茶。',
-     qs:[['今天天氣怎麼樣？','很熱','很冷','不熱','不冷'],['大衛想喝什麼？','茶','咖啡','水','都不想喝']]},
-   speak:{lines:['今天天氣好熱。','今天很冷，我想喝熱咖啡。','你要咖啡還是茶？'],ask:'你喜歡喝咖啡還是茶？為什麼？'} },
+ /* 第 1 天：對話一 */
+ { fill:[['你週末＿＿嗎？我們一起去看電影。','有空','不錯','這裡','半'],['那家＿＿的蛋糕很好吃。','咖啡廳','巧克力','音樂','錢包'],['我的＿＿在哪裡？我要去買東西。','錢包','音樂','下午茶','冰淇淋'],
+         ['今天太熱了，我們去吃冰淇淋＿＿！','吧','嗎','呢','了'],['老師＿＿教室，他在圖書館。','不在','沒有','不是','不要']],
+   order:[{g:'在 + Place + V',t:['我','在','咖啡廳','看書'],a:['我在咖啡廳看書'],end:'。'},
+          {g:'吧',t:['我們','一起','去喝','下午茶','吧'],a:['我們一起去喝下午茶吧'],end:'！'}],
+   reading:{text:'安娜這個週末有空。她想去一家咖啡廳聽音樂。那家咖啡廳的巧克力蛋糕很不錯，可是沒有冰淇淋。',
+     qs:[['安娜週末想去哪裡？','咖啡廳','圖書館','朋友家','學校'],['那家咖啡廳沒有什麼？','冰淇淋','巧克力蛋糕','音樂','咖啡']]},
+   listen:{text:'我這個星期六下午有空。那家咖啡廳的冰淇淋很不錯，我們三點半去吧！',
+     qs:[['他星期六什麼時候有空？','下午','早上','晚上','中午'],['他們幾點去？','三點半','三點','兩點半','四點半']]},
+   speak:{lines:['你這個週末有空嗎？','我們一起去喝下午茶吧！'],ask:'你週末喜歡在哪裡做什麼？'} },
 
- /* 11/12 對話一（下） */
- { fill:[['這家＿＿的麵很好吃。','餐廳','飲料','天氣','咖啡'],['我想喝＿＿水。','一點兒','太','少','還是'],['這家店＿＿很多種水果。','賣','點','餓','最'],
-         ['咖啡、茶，我＿＿不喜歡。','都','也','還是','太'],['這個蛋糕太好吃＿＿！','了','嗎','呢','也'],['他很高，＿＿很帥。','也','還是','都','太']],
-   order:[{g:'也',t:['這家餐廳的麵','很好吃，','也','很便宜'],a:['這家餐廳的麵很好吃，也很便宜','這家餐廳的麵很便宜，也很好吃'],end:'。'},
-          {g:'還是',t:['你','想去','這家餐廳','還是','那家餐廳'],a:['你想去這家餐廳還是那家餐廳','你想去那家餐廳還是這家餐廳'],end:'？'},
-          {g:'Topic + 都',t:['咖啡、茶，','我','都','喜歡'],a:['咖啡、茶，我都喜歡'],end:'。'},
-          {g:'太……了',t:['今天','太','熱','了'],a:['今天太熱了'],end:'！'}],
-   reading:{text:'李先生最愛吃蛋糕。他常常去一家咖啡店，那家店賣蛋糕，也賣咖啡。那裡的蛋糕太好吃了！可是咖啡不好喝。',
-     qs:[['李先生最愛吃什麼？','蛋糕','牛肉麵','麵','水果'],['那家店的咖啡怎麼樣？','不好喝','太好喝了','很便宜','很貴']]},
-   listen:{text:'這家餐廳的麵很好吃，可是太少了。那家餐廳的麵很多，可是不好吃。',
-     qs:[['這家餐廳的麵怎麼樣？','很好吃，可是太少','很多，可是不好吃','不好吃','太貴'],['那家餐廳的麵怎麼樣？','很多，可是不好吃','很好吃，可是太少','很好吃','很便宜']]},
-   speak:{lines:['這家餐廳人太多。','他們的麵很好吃，也很便宜。','我最愛吃牛肉麵。'],ask:'你最愛吃什麼？為什麼？'} },
+ /* 第 2 天：對話二 */
+ { fill:[['我＿＿姐姐一起去買東西。','跟','可是','再','幫'],['這件衣服很好看，＿＿太貴了。','可是','跟','還是','再'],['你在＿＿什麼？','找','跟','再','可是'],
+         ['我的書在桌子＿＿。','上面','有','在','可是'],['房間裡＿＿兩張椅子。','有','在','是','跟']],
+   order:[{g:'在 + N + 方位詞',t:['你的手機','在','桌子','上面'],a:['你的手機在桌子上面'],end:'。'},
+          {g:'Place + 有 + N',t:['客廳裡','有','兩張','沙發'],a:['客廳裡有兩張沙發'],end:'。'}],
+   reading:{text:'大衛的家不大。客廳裡有一張沙發和一張桌子。大衛的妹妹常常在沙發上看書，他的弟弟喜歡在桌子下面玩。',
+     qs:[['客廳裡有什麼？','一張沙發和一張桌子','兩張沙發','一張床','很多椅子'],['大衛的弟弟喜歡在哪裡玩？','桌子下面','沙發上面','房間裡','外面']]},
+   listen:{text:'我的筆不在桌子上面，也不在椅子下面。啊！在這裡！在沙發旁邊。',
+     qs:[['筆在哪裡？','沙發旁邊','桌子上面','椅子下面','房間外面'],['他在找什麼？','筆','錢包','書','手機']]},
+   speak:{lines:['我的錢包不在房間裡。','客廳的桌子上有一個錢包。'],ask:'你的房間裡有什麼？'} },
 
- /* 11/13 對話二 */
- { fill:[['我要一＿＿水。','瓶','碗','位','家'],['那＿＿老師是我們的中文老師。','位','碗','杯','瓶'],['這兩本書＿＿多少錢？','一共','每','最','有的'],
-         ['請＿＿我一杯紅茶。','給','點','賣','請'],['你要大杯＿＿小杯？','還是','也','都','很'],['我點綠茶，他＿＿點綠茶。','也','還是','都','太']],
-   order:[{g:'也',t:['我','點紅茶，','他','也','點紅茶'],a:['我點紅茶，他也點紅茶','他點紅茶，我也點紅茶'],end:'。'},
-          {g:'還是',t:['你們','要','紅茶','還是','綠茶'],a:['你們要紅茶還是綠茶','你們要綠茶還是紅茶'],end:'？'},
-          {g:'Topic + 都',t:['紅茶、綠茶，','我們','都','要'],a:['紅茶、綠茶，我們都要'],end:'。'},
-          {g:'太……了',t:['這碗麵','太','好吃','了'],a:['這碗麵太好吃了'],end:'！'}],
-   reading:{text:'王小姐和兩位朋友去餐廳。王小姐點了一碗麵，她的朋友都點了牛肉麵。他們也點了三杯紅茶和一瓶水。',
-     qs:[['他們一共點了幾碗麵？','三碗','一碗','兩碗','四碗'],['他們點了什麼飲料？','三杯紅茶和一瓶水','三杯綠茶','一杯紅茶和三瓶水','三瓶水']]},
-   listen:{text:'李先生和他的女朋友去餐廳。他們點了一碗牛肉麵、一碗麵和兩杯綠茶。',
-     qs:[['李先生和誰去餐廳？','女朋友','男朋友','老師','媽媽'],['他們點了什麼茶？','兩杯綠茶','兩杯紅茶','一杯綠茶','他們不要茶']]},
-   nums:[['兩百一十五','215','250','2,015','205'],['七百八十五','785','758','875','7,085']],
-   speak:{lines:['小姐，我們要點兩碗牛肉麵。','請問兩位要紅茶還是綠茶？','請問一共多少錢？'],ask:'你去餐廳常常點什麼？'} },
+ /* 第 3 天：對話一＋對話二＋短文 */
+ { fill:[['媽媽在＿＿做飯。','廚房','客廳','窗戶','沙發'],['我家有兩＿＿貓。','隻','張','位','杯'],['今天太陽很大，貓在外面＿＿。','曬太陽','看電視','聽音樂','找錢包'],
+         ['電視在沙發＿＿。','前面','有','在','可是'],['我們學校旁邊＿＿一家咖啡廳。','有','在','是','跟']],
+   order:[{g:'在 + Place + V',t:['媽媽','在','廚房','做飯'],a:['媽媽在廚房做飯'],end:'。'},
+          {g:'Place + 有 + N',t:['我的房間裡','有','一張','床'],a:['我的房間裡有一張床'],end:'。'}],
+   reading:{text:'王小姐的房間裡有一張床、一張桌子跟兩張椅子。窗戶旁邊有一台電視。她家有一隻狗，狗喜歡在門後面睡覺。',
+     qs:[['窗戶旁邊有什麼？','電視','床','椅子','狗'],['狗喜歡在哪裡睡覺？','門後面','床上面','窗戶旁邊','桌子下面']]},
+   listen:{text:'我家的客廳很大，客廳裡有一台電視跟兩張沙發。我的貓喜歡在窗戶前面曬太陽。',
+     qs:[['客廳裡有幾張沙發？','兩張','一張','三張','四張'],['貓喜歡在哪裡曬太陽？','窗戶前面','門後面','沙發上面','房間裡']]},
+   speak:{lines:['我的房間裡有一張床跟一張桌子。','我的貓喜歡在窗戶旁邊曬太陽。'],ask:'你家有幾個房間？你最喜歡在哪裡？'} },
 
- /* 11/14 數字、多、短文 */
- { fill:[['我＿＿天都喝一杯咖啡。','每','有的','一共','最'],['這些書，＿＿很便宜，有的很貴。','有的','每','一共','多少'],['＿＿天天氣很冷。','冬','夏','每','有'],
-         ['3,050 怎麼說？','三千零五十','三千五十','三千零五','三千五百'],['這個杯子一百＿＿塊錢。','多','少','太','最'],['現在十一點＿＿。','多','少','太','了'],
-         ['11～19 個蛋糕：','十多個蛋糕','十個多蛋糕','多十個蛋糕','十個蛋糕多'],['$12～13：','十二塊多','十二多塊','多十二塊','十二塊錢多']],
-   nums:[['五千零八十','5,080','5,800','5,008','50,080'],['一萬零兩百','10,200','12,000','10,020','1,200'],['九萬零五百','90,500','95,000','9,500','90,050']],
-   order:[{g:'Numbers',t:['一共','兩千','零','五','塊'],a:['一共兩千零五塊'],end:'。'},
-          {g:'多 (more than)',t:['這個杯子','一百','多','塊錢'],a:['這個杯子一百多塊錢'],end:'。'},
-          {g:'多 (more than)',t:['他的孩子','四','歲','多'],a:['他的孩子四歲多'],end:'。'},
-          {g:'太……了',t:['冬天','太','冷','了'],a:['冬天太冷了'],end:'！'},
-          {g:'Topic + 都',t:['果汁、牛奶，','我','都','不喝'],a:['果汁、牛奶，我都不喝'],end:'。'}],
-   reading:{text:'大衛在台灣，他最喜歡春天。他說夏天太熱了，冬天太冷了。大衛每天早上都喝一杯牛奶，夏天他也喝很多果汁。',
-     qs:[['大衛最喜歡什麼時候？','春天','夏天','秋天','冬天'],['大衛每天早上喝什麼？','牛奶','果汁','咖啡','茶']]},
-   listen:{text:'一個杯子一百二十塊，兩個杯子兩百四十塊。我給店員五百塊，店員找我兩百六十塊。',
-     qs:[['兩個杯子一共多少錢？','兩百四十塊','一百二十塊','兩百六十塊','五百塊'],['店員找多少錢？','兩百六十塊','兩百四十塊','三百六十塊','一百二十塊']]},
-   speak:{lines:['一共兩百一十五塊錢。','台灣夏天的天氣很熱。','我每天都喝一杯牛奶。'],ask:'菲律賓的天氣怎麼樣？你最喜歡什麼時候？'} },
+ /* 第 4 天：對話一＋對話二＋短文 */
+ { fill:[['客廳裡有沙發、桌子跟椅子，＿＿很多。','家具','窗戶','太陽','門'],['我喜歡在＿＿上看書。','床','門','貓','窗戶'],['你再去房間＿＿吧。','找','跟','可是','在'],
+         ['我的錢包＿＿這裡！','在','有','是','跟'],['這家咖啡廳很不錯，我們下次＿＿來吧。','再','在','跟','可是']],
+   order:[{g:'在 + N + 方位詞',t:['貓','在','沙發','下面'],a:['貓在沙發下面'],end:'。'},
+          {g:'吧',t:['天氣很好，','我們','去外面','吧'],a:['天氣很好，我們去外面吧'],end:'！'}],
+   reading:{text:'李先生家有三隻鳥和一隻貓。鳥在客廳的窗戶前面，貓在沙發上面曬太陽。李先生不常在家，他常常去咖啡廳聽音樂。',
+     qs:[['貓在哪裡？','沙發上面','窗戶前面','門外面','廚房裡'],['李先生常常去哪裡？','咖啡廳','學校','餐廳','朋友家']]},
+   listen:{text:'哥哥在房間裡聽音樂，姐姐在廚房做飯，弟弟跟妹妹在外面玩。',
+     qs:[['姐姐在哪裡？','廚房','房間','外面','客廳'],['誰在外面玩？','弟弟跟妹妹','哥哥','姐姐','哥哥跟姐姐']]},
+   speak:{lines:['媽媽在廚房做飯。','你再去房間找吧。'],ask:'你的手機現在在哪裡？'} },
 
- /* 11/15 綜合複習（一） */
- { fill:[['你有＿＿個中文老師？','多少','一共','什麼','還是'],['這家＿＿的東西很便宜。','商店','牛奶','冬天','果汁'],['你要喝＿＿還是牛奶？','果汁','牛肉麵','麵','碗'],
-         ['12,000 怎麼說？','一萬兩千','一千兩百','一萬零兩百','十二萬'],['他喜歡喝綠茶，＿＿喜歡喝紅茶。','也','都','還是','太'],['牛肉麵、麵，他＿＿不想吃。','都','也','還是','最'],
-         ['21～29 朵花：','二十多朵花','二十朵多花','多二十朵花','二十朵花多'],['5～6 塊錢：','五塊多','五多塊','多五塊','五塊錢多']],
-   nums:[['兩萬三千五百零五','23,505','23,550','2,355','20,355'],['八百五','850','805','8,500','815'],['五十萬','500,000','50,000','5,000,000','5,000']],
-   order:[{g:'也',t:['這個杯子','很便宜，','那個杯子','也','很便宜'],a:['這個杯子很便宜，那個杯子也很便宜','那個杯子很便宜，這個杯子也很便宜'],end:'。'},
-          {g:'還是',t:['你','喜歡','夏天','還是','冬天'],a:['你喜歡夏天還是冬天','你喜歡冬天還是夏天'],end:'？'},
-          {g:'Topic + 都',t:['這兩個杯子，','我','都','想買'],a:['這兩個杯子，我都想買'],end:'。'},
-          {g:'太……了',t:['一千塊','太','貴','了'],a:['一千塊太貴了'],end:'！'},
-          {g:'Numbers',t:['一共','三百','零','八','塊'],a:['一共三百零八塊'],end:'。'},
-          {g:'多 (more than)',t:['他','有','二十','多','個','學生'],a:['他有二十多個學生'],end:'。'}],
-   reading:{text:'安娜買了兩本書和一枝筆。書一本三百五十塊，筆八十塊，一共七百八十塊。她給店員一千塊，店員找她兩百二十塊。',
-     qs:[['一本書多少錢？','三百五十塊','八十塊','七百八十塊','兩百二十塊'],['店員找安娜多少錢？','兩百二十塊','七百八十塊','三百五十塊','一千塊']]},
-   listen:{text:'我朋友不喜歡夏天，他說夏天太熱了。他最喜歡秋天。秋天的時候，他每天都去喝咖啡。',
-     qs:[['朋友最喜歡什麼時候？','秋天','夏天','冬天','春天'],['秋天的時候，他每天做什麼？','去喝咖啡','喝果汁','喝牛奶','不喝飲料']]},
-   speak:{lines:['這家店的牛肉麵太好吃了！','我要一杯紅茶，也要一碗麵。','這個杯子一百多塊錢。'],ask:'你常常買飲料嗎？一杯多少錢？'} },
+ /* 第 5 天：L5 ＋ L4 複習 */
+ { fill:[['學校＿＿有一家很大的餐廳。','後面','可是','跟','再'],['我們一起去喝杯咖啡＿＿！','吧','嗎','呢','了'],['這張桌子一千＿＿塊錢。','多','有','在','最'],
+         ['你要喝咖啡＿＿喝茶？','還是','跟','可是','再'],['我的貓喜歡在窗戶＿＿曬太陽。','旁邊','有','在','跟']],
+   order:[{g:'Place + 有 + N',t:['學校','旁邊','有','一家','咖啡廳'],a:['學校旁邊有一家咖啡廳'],end:'。'},
+          {g:'多 (more than)',t:['這張桌子','兩千','多','塊錢'],a:['這張桌子兩千多塊錢'],end:'。'}],
+   reading:{text:'我家旁邊有一家很大的商店，那裡賣很多家具。一張桌子兩千多塊，一張椅子五百多塊。我想買一張椅子，可是我沒有錢。',
+     qs:[['一張桌子多少錢？','兩千多塊','五百多塊','兩百多塊','五千多塊'],['「我」為什麼不買椅子？','沒有錢','椅子太大','不喜歡','商店沒有椅子']]},
+   listen:{text:'這家咖啡廳的冰淇淋一個八十多塊，巧克力蛋糕一個一百五十塊。我們兩點半在咖啡廳前面見吧。',
+     qs:[['巧克力蛋糕多少錢？','一百五十塊','八十多塊','一百零五塊','五十塊'],['他們幾點在咖啡廳前面見？','兩點半','兩點','三點半','十二點半']]},
+   speak:{lines:['學校旁邊有一家咖啡廳。','那家咖啡廳的冰淇淋一個八十多塊。'],ask:'你家旁邊有什麼？'} },
 
- /* 11/16 綜合複習（二） */
- { fill:[['我最喜歡＿＿天，不冷也不熱。','秋','夏','冬','每'],['你想喝熱的＿＿冷的？','還是','也','都','太'],['我很渴，想喝＿＿果汁。','一點兒','太','最','每'],
-         ['兩杯紅茶一共八十＿＿塊錢。','多','少','太','了'],['2,500 怎麼說？','兩千五百','兩千零五百','兩千零五十','兩百五十'],['夏天＿＿熱了！','太','很','也','最'],
-         ['101～199 枝筆：','一百多枝筆','一百枝多筆','多一百枝筆','一百枝筆多'],['兩個＿＿星期（2～3 weeks）','多','少','了','太']],
-   nums:[['四萬零八十','40,080','40,800','4,080','48,000'],['三百零五萬','3,050,000','3,500,000','305,000','30,500,000'],['兩千零五','2,005','2,500','2,050','20,005']],
-   order:[{g:'也',t:['我','喜歡春天，','也','喜歡秋天'],a:['我喜歡春天，也喜歡秋天','我喜歡秋天，也喜歡春天'],end:'。'},
-          {g:'還是',t:['你','想喝','果汁','還是','牛奶'],a:['你想喝果汁還是牛奶','你想喝牛奶還是果汁'],end:'？'},
-          {g:'Topic + 都',t:['牛肉麵、蛋糕，','他','都','很喜歡'],a:['牛肉麵、蛋糕，他都很喜歡'],end:'。'},
-          {g:'太……了',t:['這家店的飲料','太','便宜','了'],a:['這家店的飲料太便宜了'],end:'！'},
-          {g:'Numbers',t:['這支手機','一萬','三千','五百','塊'],a:['這支手機一萬三千五百塊'],end:'。'},
-          {g:'多 (more than)',t:['現在','十一點','多'],a:['現在十一點多'],end:'。'}],
-   reading:{text:'這家商店賣很多東西，有的很便宜，有的很貴。一瓶水二十多塊，一個杯子三百多塊。王先生買了一瓶水和一個杯子。',
-     qs:[['一個杯子多少錢？','三百多塊','二十多塊','三十塊','三千多塊'],['這家商店的東西怎麼樣？','有的便宜，有的貴','都很便宜','都很貴','只賣水']]},
-   listen:{text:'那家商店的果汁很好喝，一杯五十多塊。牛奶也很好喝，一瓶八十多塊。',
-     qs:[['果汁一杯多少錢？','五十多塊','八十多塊','十五塊','五百多塊'],['牛奶一瓶多少錢？','八十多塊','五十多塊','十八塊','八百多塊']]},
-   speak:{lines:['我最愛喝果汁。','這家店的東西，有的很便宜，有的很貴。','一杯紅茶二十多塊錢。'],ask:'你最喜歡哪家餐廳或飲料店？那裡的東西怎麼樣？多少錢？'} }
+ /* 第 6 天：L5 ＋ L4 複習 */
+ { fill:[['這個房間＿＿小了！','太','很','最','有'],['桌子上面＿＿兩杯紅茶。','有','在','是','跟'],['他每天都在咖啡廳＿＿書。','看','聽','找','幫'],
+         ['18,600 怎麼說？','一萬八千六百','一萬八千零六百','一千八百六十','十八萬六千'],['我哥哥＿＿房間裡，他在客廳。','不在','沒有','不是','不要']],
+   order:[{g:'在 + Place + V',t:['我們','在','客廳','看電視','吧'],a:['我們在客廳看電視吧'],end:'。'},
+          {g:'太……了',t:['這個房間','太','小','了'],a:['這個房間太小了'],end:'！'}],
+   reading:{text:'小美跟她的姐姐一起去喝下午茶。姐姐要一杯紅茶，小美要一杯咖啡跟一個巧克力冰淇淋，一共三百八十塊。',
+     qs:[['小美跟誰去喝下午茶？','姐姐','妹妹','媽媽','朋友'],['一共多少錢？','三百八十塊','三百零八塊','三千八百塊','八十三塊']]},
+   listen:{text:'我的房間不大，可是有一個很大的窗戶。窗戶旁邊有一張桌子，我常常在那裡看書、聽音樂。',
+     qs:[['他的房間怎麼樣？','不大，可是窗戶很大','很大','沒有窗戶','很小，也沒有桌子'],['他常常在哪裡看書？','窗戶旁邊的桌子','床上','客廳','咖啡廳']]},
+   speak:{lines:['這個房間太小了！','我們在客廳看電視吧。'],ask:'介紹你的房間：房間裡有什麼？東西在哪裡？'} }
 ];
 
 /* ================= 工具 ================= */
@@ -300,29 +288,27 @@ function renderLogin(){
     S.name=a;store.set('pr_name',a);
     if(!PREVIEW){
       try{const r=await fetch(`${CONFIG.API_URL}?action=week&name=${encodeURIComponent(a)}`);const j=await r.json();
-        if((j.dates||[]).includes(dateOf(S.day).iso)){S.step=6;header();app.innerHTML=`<h1>You’re done for today</h1><div class="panel"><p>${esc(a)}, today’s practice has been submitted. New practice opens tomorrow at ${CONFIG.SWITCH_HOUR}:00 a.m.</p>${weekHTML(j.dates)}</div>`;return}}catch(err){}
+        const rec=toMap(j);
+        if(dateOf(S.day).iso in rec){S.step=6;header();app.innerHTML=`<h1>You’re done for today</h1><div class="panel"><p>${esc(a)}, today’s practice has been submitted. Today’s score: <b>${rec[dateOf(S.day).iso]}</b> / 100. New practice opens tomorrow at ${CONFIG.SWITCH_HOUR}:00 a.m.</p>${weekHTML(rec)}</div>`;return}}catch(err){}
     }
     S.results=[];S.recs={};
     runQuiz(0,vocabQs());
   };
 }
 
-/* ================= 1. 生詞測驗（自動出 20 題） ================= */
+/* ================= 1. 生詞測驗 ================= */
 function vocabQs(){
-  const r=rng(S.name+'v'+S.day), d=S.day+1;
-  const pool=VOCAB.filter(v=>v.d<=d), fresh=pool.filter(v=>v.d===d), old=pool.filter(v=>v.d<d);
-  let pick=[];
-  const review=d>4;   // 最後兩天：整課綜合複習
-  if(!review){pick=shuffle(fresh,r).concat(shuffle(fresh,r));}   // 今天的新詞出現兩次
-  pick=pick.concat(shuffle(review?pool:old,r)).slice(0,15);
-  while(pick.length<15)pick.push(pool[Math.floor(r()*pool.length)]);
+  const r=rng(S.name+'v'+S.day+CONFIG.LESSON), cfg=DAY_POOLS[S.day];
+  const pool=VOCAB.filter(v=>cfg.pool.includes(v.g));
+  const focus=cfg.focus===null?[]:shuffle(pool.filter(v=>v.g===cfg.focus),r);
+  let pick=focus.slice(0,Math.min(focus.length,cfg.focus===3?5:N_VOCAB));
+  pick=pick.concat(shuffle(pool.filter(v=>!pick.includes(v)),r)).slice(0,N_VOCAB);
   const formats=[['h','p'],['h','e'],['a','h'],['a','e'],['a','p'],['e','h'],['p','h']];
-  const used=new Set();
   return shuffle(pick,r).map((v,i)=>{
-    let f;for(let k=0;k<10;k++){f=formats[Math.floor(r()*formats.length)];if(!used.has(v.h+f))break}
-    used.add(v.h+f);
-    const [show,ans]=f, key={h:'h',p:'p',e:'e'}[ans];
-    const others=shuffle(pool.filter(o=>o.h!==v.h&&o[key]!==v[key]),r).concat(shuffle(VOCAB.filter(o=>o.d>d&&o[key]!==v[key]),r));
+    const f=formats[Math.floor(r()*formats.length)];
+    const [show,ans]=f, key=ans;
+    const okDistractor=o=>o.h!==v.h&&o[key]!==v[key]&&!(show==='a'&&o.p===v.p)&&!(show==='p'&&o.p===v.p);
+    const others=shuffle(pool.filter(okDistractor),r).concat(shuffle(VOCAB.filter(okDistractor),r));
     const wrong=[];for(const o of others){if(!wrong.includes(o[key]))wrong.push(o[key]);if(wrong.length===3)break}
     const prompt={h:ans==='p'?'Choose the pinyin.':'Choose the meaning.',a:'Listen and choose the '+(ans==='h'?'characters':ans==='p'?'pinyin':'meaning')+'.',e:'Choose the characters.',p:'Choose the characters.'}[show];
     return{type:'mc',sec:'生詞',q:prompt,show,word:v,ans:v[key],wrong,ansKind:ans,id:'v'+i};
@@ -402,7 +388,7 @@ function renderSpeak(){
   S.step=5;header();
   const sp=DAYS[S.day].speak;
   const items=sp.lines.map((l,k)=>({id:'read'+(k+1),label:`Read aloud ${k+1}`,text:l})).concat([{id:'answer',label:'Answer the question',text:sp.ask,ask:true}]);
-  app.innerHTML=`<h1>Recording</h1><p class="sub">Record each item separately. You can listen and re-record. Submit opens after all four are recorded.</p>
+  app.innerHTML=`<h1>Recording</h1><p class="sub">Record each item separately. You can listen and re-record. Submit opens after all three are recorded.</p>
   <div class="panel">${items.map(it=>`<div class="recitem" id="ri-${it.id}"><span class="tag">${it.label}</span><div class="sent">${it.ask?'<span class="note">Answer in Chinese:</span><br>':''}${esc(it.text)}</div><div class="rbar" id="rb-${it.id}"></div></div>`).join('')}</div>
   <div style="margin-top:16px"><button class="btn" id="send" type="button" disabled>Submit</button>${PREVIEW?'<p class="note">Teacher preview: you can submit without recording to see the results page.</p>':''}<div class="err" id="err"></div></div>`;
   let active=null;
@@ -454,31 +440,37 @@ async function submit(items){
     const body=JSON.stringify({name:S.name,date:dateOf(S.day).iso,lesson:CONFIG.LESSON,score,total,results:S.results,audios});
     const r=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
     const j=await r.json();if(!j.ok)throw new Error(j.error||'error');
-    renderDone(score,total,j.dates||[dateOf(S.day).iso]);
+    renderDone(score,total,toMap(j));
   }catch(e){
     btn.disabled=false;btn.textContent='Try again';
     $('#err').textContent='Not sent. Check your internet connection and try again.';
   }
 }
 
-/* ================= 完成＋本週繳交紀錄 ================= */
-function weekHTML(dates){
-  const done=new Set(dates||[]);const today=S.day;let n=0;
-  const cells=DAYS.map((_,i)=>{const d=dateOf(i);const y=done.has(d.iso);if(y)n++;
-    const cls=y?'y':(i<today||(i===today&&false))?'n':'';const mark=y?'1':i<today?'0':'–';
+/* ================= 完成＋本週成績 ================= */
+function pct(score,total){return total?Math.round(score/total*100):0}
+function toMap(j){const m={};(j.records||[]).forEach(r=>{if(!(r.date in m))m[r.date]=r.score});(j.dates||[]).forEach(d=>{if(!(d in m))m[d]=null});return m}
+function weekHTML(rec){
+  const today=S.day;let sum=0,cnt=0,sub=0;
+  const cells=DAYS.map((_,i)=>{const d=dateOf(i);const has=d.iso in rec;
+    let cls='',mark='–';
+    if(has){cls='y';mark=rec[d.iso]===null?'✓':rec[d.iso];sub++;if(rec[d.iso]!==null){sum+=rec[d.iso];cnt++}}
+    else if(i<today){cls='n';mark='0';cnt++}
     return`<div class="${cls}">${d.short}<b>${mark}</b></div>`}).join('');
-  const past=Math.min(today+1,DAYS.length);
-  return`<h2 style="font-size:18px;margin:18px 0 0">This week</h2><p class="note" style="margin:4px 0 0">1 = submitted, 0 = missed. So far: ${n} submitted, ${past-n} missed.</p><div class="week">${cells}</div>`;
+  const avg=cnt?Math.round(sum/cnt):0;
+  return`<h2 style="font-size:18px;margin:18px 0 0">This week</h2><p class="note" style="margin:4px 0 0">Daily score out of 100. A missed day counts as 0.<br>Submitted: ${sub} day(s). Average so far: <b>${avg}</b></p><div class="week">${cells}</div>`;
 }
-function renderDone(score,total,dates){
+function renderDone(score,total,rec){
   S.step=6;header();
   const secs=['生詞','填空','重組','閱讀','聽力'].map(s=>{const rs=S.results.filter(r=>r.sec===s);return`<tr><td>${{生詞:'Vocabulary',填空:'Multiple Choice',重組:'Sentence Order',閱讀:'Reading',聽力:'Listening'}[s]}</td><td>${rs.filter(r=>r.ok).length} / ${rs.length}</td></tr>`}).join('');
-  const preview=dates===null;
-  if(preview){dates=[];for(let i=0;i<=S.day;i++)if(i!==1)dates.push(dateOf(i).iso)}
-  app.innerHTML=`<h1>Done for today!</h1><div class="panel"><div class="score">${score} / ${total}</div>
-  <table class="res">${secs}<tr><td>Recording</td><td>4 submitted</td></tr></table>
-  ${weekHTML(dates)}
-  ${preview?'<p class="note">Teacher preview: this week’s record is sample data (day 2 marked as missed). Nothing was submitted.</p>':''}
+  const preview=rec===null;const p=pct(score,total);
+  if(preview){rec={};for(let i=0;i<S.day;i++)if(i!==1)rec[dateOf(i).iso]=80+i*3}
+  rec[dateOf(S.day).iso]=p;
+  app.innerHTML=`<h1>Done for today!</h1><div class="panel"><div class="score">${p}<span style="font-size:20px;color:var(--muted)"> / 100</span></div>
+  <p class="note" style="text-align:center;margin-top:0">${score} of ${total} correct</p>
+  <table class="res">${secs}<tr><td>Recording (not scored)</td><td>3 submitted</td></tr></table>
+  ${weekHTML(rec)}
+  ${preview?'<p class="note">Teacher preview: earlier days are sample data (day 2 marked as missed). Nothing was submitted.</p>':''}
   <p class="note">New practice opens tomorrow at ${CONFIG.SWITCH_HOUR}:00 a.m. See you tomorrow.</p></div>`;
 }
 
