@@ -89,6 +89,9 @@ select,input[type=text]{width:100%;font:inherit;padding:12px;border:1px solid va
 .small{border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer}
 .timer{font-variant-numeric:tabular-nums;color:var(--muted);font-size:15px}
 .okmark{color:var(--ok);font-weight:700;font-size:15px}
+.recwarn{display:block;width:100%;color:var(--bad,#b3261e);font-weight:700;font-size:15px;margin-top:6px}
+.prac{display:block;width:100%;margin-top:8px;font-size:15px}
+.prac .hit{color:var(--ok);font-weight:700}.prac .miss{color:var(--bad,#b3261e);text-decoration:underline}
 audio{width:100%}
 .score{font-size:44px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;margin:8px 0}
 table.res{width:100%;border-collapse:collapse;font-size:16px}
@@ -394,16 +397,43 @@ function renderSpeak(){
   let active=null;
   const canMic=!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder);
   function refresh(){$('#send').disabled=!PREVIEW&&!items.every(it=>S.recs[it.id])}
-  function idle(it){
+  function idle(it,warn){
     const box=$('#rb-'+it.id),done=S.recs[it.id];
     if(done){
       box.innerHTML=`<audio controls src="${URL.createObjectURL(done)}"></audio><span class="okmark">✓ Recorded</span><button class="small" type="button" data-re>Re-record</button>`;
       box.querySelector('[data-re]').onclick=()=>{delete S.recs[it.id];refresh();idle(it)};
     }else{
-      box.innerHTML=`<button class="recbtn" type="button" data-go>● Record</button><span class="timer">Not recorded yet</span>`;
+      box.innerHTML=`<button class="recbtn" type="button" data-go>● Record</button><span class="timer">Not recorded yet</span>${warn?`<span class="recwarn">${warn}</span>`:''}`;
       box.querySelector('[data-go]').onclick=()=>start(it);
     }
+    if(!it.ask)addPractice(it,box);
     refresh();
+  }
+  /* 錄完先檢查：太短或沒有聲音就請學生重錄 */
+  async function accept(it,blob){
+    const box=$('#rb-'+it.id);box.innerHTML=`<span class="timer">Checking…</span>`;
+    const r=await checkAudio(blob,it.ask?2:1.5);
+    if(r.ok){S.recs[it.id]=blob;idle(it)}
+    else idle(it,r.why==='short'?'Too short. Please record the whole sentence again.':'We could not hear you. Please record again, closer to the microphone.');
+  }
+  /* 練習用：語音辨識看哪些字念清楚（不算分、不送出） */
+  function addPractice(it,box){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR||active)return;
+    const p=document.createElement('div');p.className='prac';
+    p.innerHTML=`<button class="small" type="button">Practice check (not graded)</button><span class="pres"></span>`;
+    box.appendChild(p);
+    const out=p.querySelector('.pres');
+    p.querySelector('button').onclick=()=>{
+      if(active)return;
+      let rec;try{rec=new SR()}catch(e){out.textContent=' Not available on this phone.';return}
+      rec.lang='zh-TW';rec.interimResults=false;rec.maxAlternatives=3;
+      let got=false;out.textContent=' Listening… read the sentence now.';
+      rec.onresult=e=>{got=true;const alts=[...e.results[0]].map(a=>a.transcript);out.innerHTML=' '+practiceHTML(it.text,alts)};
+      rec.onerror=()=>{if(!got)out.textContent=' Could not check. You can still record normally.'};
+      rec.onend=()=>{if(!got&&/Listening/.test(out.textContent))out.textContent=' Nothing heard. Try again.'};
+      try{rec.start()}catch(e){out.textContent=' Could not check. You can still record normally.'}
+    };
   }
   async function start(it){
     if(active)return;
@@ -417,19 +447,49 @@ function renderSpeak(){
     box.innerHTML=`<button class="recbtn stop" type="button" data-st>■ Stop</button><span class="timer">0:00</span>`;
     const tm=box.querySelector('.timer');
     const tick=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);tm.textContent=`Recording ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;if(s>=90)mr.stop()},250);
-    mr.onstop=()=>{clearInterval(tick);stream.getTracks().forEach(t=>t.stop());active=null;S.recs[it.id]=new Blob(chunks,{type:mr.mimeType||'audio/webm'});idle(it)};
+    mr.onstop=()=>{clearInterval(tick);stream.getTracks().forEach(t=>t.stop());active=null;accept(it,new Blob(chunks,{type:mr.mimeType||'audio/webm'}))};
     box.querySelector('[data-st]').onclick=()=>mr.stop();
     mr.start();
   }
   function fallback(it){
     const box=$('#rb-'+it.id);
     box.innerHTML=`<span class="note">Recording is not available here. Record on your phone first, then choose the file:</span><input type="file" accept="audio/*" capture id="file-${it.id}" aria-label="Choose a recording">`;
-    box.querySelector('input').onchange=e=>{const f=e.target.files[0];if(f){S.recs[it.id]=f;idle(it)}};
+    box.querySelector('input').onchange=e=>{const f=e.target.files[0];if(f)accept(it,f)};
   }
   items.forEach(idle);
   $('#send').onclick=()=>submit(items);
 }
 
+/* 音檔檢查：長度＋有聲音的秒數。手機無法解碼的格式只看檔案大小，不擋人 */
+function analyzePCM(data,rate,minSec){
+  const dur=data.length/rate,win=Math.max(1,Math.round(rate*0.05));let voiced=0;
+  for(let i=0;i+win<=data.length;i+=win){let s=0;for(let j=i;j<i+win;j++)s+=data[j]*data[j];if(Math.sqrt(s/win)>0.01)voiced++}
+  const vs=voiced*0.05;
+  if(dur<minSec)return{ok:false,why:'short',dur,vs};
+  if(vs<0.6)return{ok:false,why:'silent',dur,vs};
+  return{ok:true,dur,vs};
+}
+async function checkAudio(blob,minSec){
+  if(!blob||!blob.size)return{ok:false,why:'short'};
+  let ctx;
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw 0;
+    const buf=await blob.arrayBuffer();ctx=new AC();
+    const ab=await new Promise((res,rej)=>{const p=ctx.decodeAudioData(buf,res,rej);if(p&&p.then)p.then(res,rej)});
+    return analyzePCM(ab.getChannelData(0),ab.sampleRate,minSec);
+  }catch(e){
+    return blob.size<4000?{ok:false,why:'short'}:{ok:true};
+  }finally{try{ctx&&ctx.close()}catch(e){}}
+}
+/* 練習比對：題目每個字有沒有被辨識出來 */
+function practiceHTML(target,alts){
+  const norm=s=>[...String(s)].filter(c=>/[一-鿿0-9]/.test(c));
+  const t=norm(target);let best=null;
+  for(const a of alts){const pool=norm(a);const m=t.map(c=>{const k=pool.indexOf(c);if(k>=0){pool.splice(k,1);return true}return false});
+    const n=m.filter(Boolean).length;if(!best||n>best.n)best={m,n}}
+  const html=t.map((c,i)=>`<span class="${best.m[i]?'hit':'miss'}">${esc(c)}</span>`).join('');
+  return `${html} &nbsp;${best.n}/${t.length} ${best.n===t.length?'Great!':'Try the underlined words again.'}`;
+}
 function toB64(blob){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(',')[1]);fr.onerror=rej;fr.readAsDataURL(blob)})}
 async function submit(items){
   const btn=$('#send');btn.disabled=true;btn.textContent='Submitting…';
