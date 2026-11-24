@@ -119,9 +119,9 @@ table.res td:last-child{text-align:right;font-variant-numeric:tabular-nums}
 /* ================= 設定 ================= */
 const CONFIG = {
   API_URL: 'https://script.google.com/macros/s/AKfycby3QLm7OD5-xruxWy-pr_12xq8ZhENa4mzEWaO8kEF68vSkjDLa533AUTqb6XXJXrc1/exec',               // Google Apps Script 網址（設定後才會真的送出）
-  START_DATE: '2026-11-18',  // 第一天的日期
+  START_DATE: '2026-11-25',  // 第一天的日期
   SWITCH_HOUR: 8,            // 每天幾點換新內容（台灣時間）
-  LESSON: 'L5'
+  LESSON: 'L6'
 };
 const STUDENTS = ['詹凱','原莉花','柳美琪','珍妍','凌心','羅玥曦','李達欣','葉瑞安','安怡慈','煦晗運',
   '凌霄志','維欣','泰叡','李芷妍','達西','柯安仁','若詩','林語晴','內齊蒙','艾卓然',
@@ -129,29 +129,41 @@ const STUDENTS = ['詹凱','原莉花','柳美琪','珍妍','凌心','羅玥曦'
   '江芷欣','施薇妍','王若仙','李紫心','林雅思','韓微','林心妍','王宇軒','林秋月','姬月隱'];
 
 /* ================= 生詞 =================
-   g: 1=對話一  2=對話二  3=短文  p=前一課（L4） */
+   g: 1=對話一  2=對話二  3=短文  p=L5  q=L4 */
 const VOCAB = [
- [1,'錢包','qiánbāo','wallet'],[1,'在','zài','to be (at a place)'],[1,'哪裡','nǎlǐ','where'],[1,'聽','tīng','to listen'],[1,'音樂','yīnyuè','music'],
- [1,'有空','yǒukòng','free; available'],[1,'下午茶','xiàwǔ chá','afternoon tea'],[1,'不錯','búcuò','not bad; pretty good'],[1,'咖啡廳','kāfēitīng','café'],
- [1,'那裡','nàlǐ','there'],[1,'這裡','zhèlǐ','here'],[1,'冰淇淋','bīngqílín','ice cream'],[1,'巧克力','qiǎokèlì','chocolate'],[1,'半','bàn','half'],[1,'吧','ba','(particle for suggestions)'],
- [2,'跟','gēn','and; with'],[2,'可是','kěshì','but'],[2,'房間','fángjiān','room'],[2,'房子','fángzi','house'],[2,'裡面','lǐmiàn','inside'],[2,'外面','wàimiàn','outside'],
- [2,'客廳','kètīng','living room'],[2,'桌子','zhuōzi','table'],[2,'椅子','yǐzi','chair'],[2,'張','zhāng','measure word for tables, chairs'],[2,'上面','shàngmiàn','on; above'],
- [2,'哥哥','gēge','older brother'],[2,'姐姐','jiějie','older sister'],[2,'弟弟','dìdi','younger brother'],[2,'妹妹','mèimei','younger sister'],[2,'沙發','shāfā','sofa'],
- [2,'下面','xiàmiàn','under; below'],[2,'旁邊','pángbiān','next to'],[2,'前面','qiánmiàn','in front of'],[2,'後面','hòumiàn','behind'],[2,'幫','bāng','to help'],
- [2,'找','zhǎo','to look for'],[2,'廚房','chúfáng','kitchen'],[2,'再','zài','again'],
- [3,'床','chuáng','bed'],[3,'家具','jiājù','furniture'],[3,'電視','diànshì','TV'],[3,'窗戶','chuānghù','window'],[3,'門','mén','door'],[3,'貓','māo','cat'],
- [3,'狗','gǒu','dog'],[3,'鳥','niǎo','bird'],[3,'隻','zhī','measure word for animals'],[3,'太陽','tàiyáng','sun'],[3,'曬太陽','shài tàiyáng','to sunbathe'],
- ['p','咖啡','kāfēi','coffee'],['p','還是','háishì','or (in questions)'],['p','天氣','tiānqì','weather'],['p','熱','rè','hot'],['p','冷','lěng','cold'],
- ['p','飲料','yǐnliào','beverage'],['p','餓','è','hungry'],['p','渴','kě','thirsty'],['p','餐廳','cāntīng','restaurant'],['p','太','tài','too (much)'],
- ['p','少','shǎo','few; little'],['p','好吃','hǎochī','delicious (food)'],['p','好喝','hǎohē','tasty (drink)'],['p','最','zuì','most'],['p','賣','mài','to sell'],
- ['p','牛肉麵','niúròu miàn','beef noodles'],['p','點','diǎn','to order (food)'],['p','碗','wǎn','bowl'],['p','杯','bēi','cup of'],['p','瓶','píng','bottle of'],
- ['p','紅茶','hóngchá','black tea'],['p','綠茶','lǜchá','green tea'],['p','給','gěi','to give'],['p','一共','yígòng','altogether'],['p','多少','duōshǎo','how much; how many'],
- ['p','找錢','zhǎoqián','to give change'],['p','百','bǎi','hundred'],['p','千','qiān','thousand'],['p','萬','wàn','ten thousand'],['p','零','líng','zero'],
- ['p','夏天','xiàtiān','summer'],['p','冬天','dōngtiān','winter'],['p','商店','shāngdiàn','store; shop'],['p','果汁','guǒzhī','juice'],['p','牛奶','niúnǎi','milk'],
- ['p','有的','yǒude','some'],['p','每','měi','every; each']
+ [1,'打','dǎ','to play (ball games)'],[1,'網球','wǎngqiú','tennis'],[1,'球','qiú','ball'],[1,'籃球','lánqiú','basketball'],[1,'棒球','bàngqiú','baseball'],
+ [1,'足球','zúqiú','soccer'],[1,'踢','tī','to kick'],[1,'海邊','hǎibiān','beach; seaside'],[1,'海','hǎi','sea'],[1,'山','shān','mountain'],
+ [1,'風景','fēngjǐng','scenery'],[1,'游泳','yóuyǒng','to swim'],[1,'會','huì','can; know how to'],[1,'得','de','(complement marker)'],[1,'跑步','pǎobù','to jog'],
+ [1,'跑','pǎo','to run'],[1,'慢','màn','slow'],[1,'快','kuài','fast'],[1,'說','shuō','to speak; to say'],[1,'說話','shuōhuà','to talk'],
+ [2,'電影','diànyǐng','movie'],[2,'部','bù','measure word for movies'],[2,'電影院','diànyǐngyuàn','movie theater'],[2,'有趣','yǒuqù','interesting; fun'],[2,'覺得','juéde','to feel; to think'],
+ [2,'有一點兒','yǒu yìdiǎnr','a little; a bit'],[2,'休息','xiūxí','to rest'],[2,'上網','shàngwǎng','to go online'],[2,'電腦','diànnǎo','computer'],[2,'手機','shǒujī','cell phone'],
+ [2,'支','zhī','measure word for cell phones'],[2,'應該','yīnggāi','should'],[2,'運動','yùndòng','to exercise; sports'],[2,'可以','kěyǐ','may; can (be allowed to)'],[2,'騎','qí','to ride'],
+ [2,'腳踏車','jiǎotàchē','bicycle'],[2,'輛','liàng','measure word for vehicles'],[2,'只','zhǐ','only'],[2,'後天','hòutiān','the day after tomorrow'],[2,'前天','qiántiān','the day before yesterday'],
+ [2,'聽說','tīngshuō','to hear (that)'],
+ [3,'興趣','xìngqù','interest; hobby'],[3,'學','xué','to learn'],[3,'學習','xuéxí','to study'],[3,'唱歌','chànggē','to sing'],[3,'歌','gē','song'],
+ [3,'首','shǒu','measure word for songs'],[3,'跳舞','tiàowǔ','to dance'],[3,'畫畫','huàhuà','to draw; to paint'],[3,'畫','huà','painting; picture'],[3,'平常','píngcháng','usually'],
+ [3,'有時候','yǒu shíhòu','sometimes'],[3,'比賽','bǐsài','game; competition'],[3,'真','zhēn','really; truly'],[3,'高興','gāoxìng','happy; glad'],
+ ['p','錢包','qiánbāo','wallet'],['p','在','zài','to be (at a place)'],['p','哪裡','nǎlǐ','where'],['p','聽','tīng','to listen'],['p','音樂','yīnyuè','music'],
+ ['p','有空','yǒukòng','free; available'],['p','下午茶','xiàwǔ chá','afternoon tea'],['p','不錯','búcuò','not bad; pretty good'],['p','咖啡廳','kāfēitīng','café'],
+ ['p','那裡','nàlǐ','there'],['p','這裡','zhèlǐ','here'],['p','冰淇淋','bīngqílín','ice cream'],['p','巧克力','qiǎokèlì','chocolate'],['p','半','bàn','half'],['p','吧','ba','(particle for suggestions)'],
+ ['p','跟','gēn','and; with'],['p','可是','kěshì','but'],['p','房間','fángjiān','room'],['p','房子','fángzi','house'],['p','裡面','lǐmiàn','inside'],['p','外面','wàimiàn','outside'],
+ ['p','客廳','kètīng','living room'],['p','桌子','zhuōzi','table'],['p','椅子','yǐzi','chair'],['p','張','zhāng','measure word for tables, chairs'],['p','上面','shàngmiàn','on; above'],
+ ['p','哥哥','gēge','older brother'],['p','姐姐','jiějie','older sister'],['p','弟弟','dìdi','younger brother'],['p','妹妹','mèimei','younger sister'],['p','沙發','shāfā','sofa'],
+ ['p','下面','xiàmiàn','under; below'],['p','旁邊','pángbiān','next to'],['p','前面','qiánmiàn','in front of'],['p','後面','hòumiàn','behind'],['p','幫','bāng','to help'],
+ ['p','找','zhǎo','to look for'],['p','廚房','chúfáng','kitchen'],['p','再','zài','again'],
+ ['p','床','chuáng','bed'],['p','家具','jiājù','furniture'],['p','電視','diànshì','TV'],['p','窗戶','chuānghù','window'],['p','門','mén','door'],['p','貓','māo','cat'],
+ ['p','狗','gǒu','dog'],['p','鳥','niǎo','bird'],['p','隻','zhī','measure word for animals'],['p','太陽','tàiyáng','sun'],['p','曬太陽','shài tàiyáng','to sunbathe'],
+ ['q','咖啡','kāfēi','coffee'],['q','還是','háishì','or (in questions)'],['q','天氣','tiānqì','weather'],['q','熱','rè','hot'],['q','冷','lěng','cold'],
+ ['q','飲料','yǐnliào','beverage'],['q','餓','è','hungry'],['q','渴','kě','thirsty'],['q','餐廳','cāntīng','restaurant'],['q','太','tài','too (much)'],
+ ['q','少','shǎo','few; little'],['q','好吃','hǎochī','delicious (food)'],['q','好喝','hǎohē','tasty (drink)'],['q','最','zuì','most'],['q','賣','mài','to sell'],
+ ['q','牛肉麵','niúròu miàn','beef noodles'],['q','點','diǎn','to order (food)'],['q','碗','wǎn','bowl'],['q','杯','bēi','cup of'],['q','瓶','píng','bottle of'],
+ ['q','紅茶','hóngchá','black tea'],['q','綠茶','lǜchá','green tea'],['q','給','gěi','to give'],['q','一共','yígòng','altogether'],['q','多少','duōshǎo','how much; how many'],
+ ['q','找錢','zhǎoqián','to give change'],['q','百','bǎi','hundred'],['q','千','qiān','thousand'],['q','萬','wàn','ten thousand'],['q','零','líng','zero'],
+ ['q','夏天','xiàtiān','summer'],['q','冬天','dōngtiān','winter'],['q','商店','shāngdiàn','store; shop'],['q','果汁','guǒzhī','juice'],['q','牛奶','niúnǎi','milk'],
+ ['q','有的','yǒude','some'],['q','每','měi','every; each']
 ].map(([g,h,p,e])=>({g,h,p,e}));
 /* 每天考哪些生詞、哪一組是當天重點 */
-const DAY_POOLS = [{pool:[1],focus:1},{pool:[2],focus:2},{pool:[1,2,3],focus:3},{pool:[1,2,3],focus:null},{pool:[1,2,3,'p'],focus:null},{pool:[1,2,3,'p'],focus:null}];
+const DAY_POOLS = [{pool:[1],focus:1},{pool:[2],focus:2},{pool:[1,2,3],focus:3},{pool:[1,2,3],focus:null},{pool:[1,2,3,'p'],focus:null},{pool:[1,2,3,'p','q'],focus:null}];
 const N_VOCAB = 8;
 
 /* ================= 每天的內容 =================
@@ -159,70 +171,70 @@ const N_VOCAB = 8;
    重組：{g:語法點, t:[詞塊], a:[可接受的答案], end:標點} */
 const DAYS = [
  /* 第 1 天：對話一 */
- { fill:[['你週末＿＿嗎？我們一起去看電影。','有空','不錯','這裡','半'],['那家＿＿的蛋糕很好吃。','咖啡廳','巧克力','音樂','錢包'],['我的＿＿在哪裡？我要去買東西。','錢包','音樂','下午茶','冰淇淋'],
-         ['今天太熱了，我們去吃冰淇淋＿＿！','吧','嗎','呢','了'],['老師＿＿教室，他在圖書館。','不在','沒有','不是','不要']],
-   order:[{g:'在 + Place + V',t:['我','在','咖啡廳','看書'],a:['我在咖啡廳看書'],end:'。'},
-          {g:'吧',t:['我們','一起','去喝','下午茶','吧'],a:['我們一起去喝下午茶吧'],end:'！'}],
-   reading:{text:'安娜這個週末有空。她想去一家咖啡廳聽音樂。那家咖啡廳的巧克力蛋糕很不錯，可是沒有冰淇淋。',
-     qs:[['安娜週末想去哪裡？','咖啡廳','圖書館','朋友家','學校'],['那家咖啡廳沒有什麼？','冰淇淋','巧克力蛋糕','音樂','咖啡']]},
-   listen:{text:'我這個星期六下午有空。那家咖啡廳的冰淇淋很不錯，我們三點半去吧！',
-     qs:[['他星期六什麼時候有空？','下午','早上','晚上','中午'],['他們幾點去？','三點半','三點','兩點半','四點半']]},
-   speak:{lines:['你這個週末有空嗎？','我們一起去喝下午茶吧！'],ask:'你週末喜歡在哪裡做什麼？'} },
+ { fill:[['我＿＿游泳，可是游得不太好。','會','得','慢','踢'],['他跑＿＿很快。','得','的','了','會'],['那個孩子很愛＿＿足球。','踢','打','跑','說'],
+         ['今天天氣不錯，我們去＿＿曬太陽吧。','海邊','網球','風景','跑步'],['我妹妹跑得很慢，我跑得很＿＿。','快','好看','海','會']],
+   order:[{g:'V-O + V得',t:['他','游泳','游得','很快'],a:['他游泳游得很快'],end:'。'},
+          {g:'會 (know how to)',t:['我','不會','打','棒球'],a:['我不會打棒球'],end:'。'}],
+   reading:{text:'大衛會打籃球，也會踢足球。他籃球打得很好，可是足球踢得不太好。週末他常常跟朋友去海邊跑步。',
+     qs:[['大衛什麼打得很好？','籃球','足球','網球','棒球'],['週末大衛常常做什麼？','去海邊跑步','去山上看風景','去學校踢足球','在家打球']]},
+   listen:{text:'今天天氣很好，哥哥想去游泳。可是妹妹不會游泳，她想去打網球。',
+     qs:[['誰不會游泳？','妹妹','哥哥','姐姐','弟弟'],['妹妹想做什麼？','打網球','游泳','跑步','踢足球']]},
+   speak:{lines:['我會游泳，可是游得不太好。','我朋友的網球打得很好。'],ask:'你會什麼運動？你做得怎麼樣？'} },
 
  /* 第 2 天：對話二 */
- { fill:[['我＿＿姐姐一起去買東西。','跟','可是','再','幫'],['這件衣服很好看，＿＿太貴了。','可是','跟','還是','再'],['你在＿＿什麼？','找','跟','再','可是'],
-         ['我的書在桌子＿＿。','上面','有','在','可是'],['房間裡＿＿兩張椅子。','有','在','是','跟']],
-   order:[{g:'在 + N + 方位詞',t:['你的手機','在','桌子','上面'],a:['你的手機在桌子上面'],end:'。'},
-          {g:'Place + 有 + N',t:['客廳裡','有','兩張','沙發'],a:['客廳裡有兩張沙發'],end:'。'}],
-   reading:{text:'大衛的家不大。客廳裡有一張沙發和一張桌子。大衛的妹妹常常在沙發上看書，他的弟弟喜歡在桌子下面玩。',
-     qs:[['客廳裡有什麼？','一張沙發和一張桌子','兩張沙發','一張床','很多椅子'],['大衛的弟弟喜歡在哪裡玩？','桌子下面','沙發上面','房間裡','外面']]},
-   listen:{text:'我的筆不在桌子上面，也不在椅子下面。啊！在這裡！在沙發旁邊。',
-     qs:[['筆在哪裡？','沙發旁邊','桌子上面','椅子下面','房間外面'],['他在找什麼？','筆','錢包','書','手機']]},
-   speak:{lines:['我的錢包不在房間裡。','客廳的桌子上有一個錢包。'],ask:'你的房間裡有什麼？'} },
+ { fill:[['聽說這部電影很＿＿，我們晚上一起去看吧。','有趣','休息','應該','只'],['我覺得＿＿累，想回家休息。','有一點兒','一點兒','很多','太'],
+         ['你不要常常在家玩手機，＿＿去運動。','應該','只','覺得','聽說'],['媽媽，我＿＿吃冰淇淋嗎？','可以','得','有','部'],['我們明天去看一＿＿電影吧。','部','支','輛','張']],
+   order:[{g:'有一點兒 + Vs',t:['今天','天氣','有一點兒','冷'],a:['今天天氣有一點兒冷','天氣今天有一點兒冷'],end:'。'},
+          {g:'可以',t:['我們','可以','一起去','騎腳踏車'],a:['我們可以一起去騎腳踏車'],end:'。'}],
+   reading:{text:'安娜很喜歡看電影，可是這兩天她有一點兒累，只想在家休息、上網。她朋友說：「明天我們可以一起去騎腳踏車。」',
+     qs:[['這兩天安娜想做什麼？','在家休息、上網','去電影院看電影','去騎腳踏車','去運動'],['安娜的朋友明天想做什麼？','騎腳踏車','看電影','上網','休息']]},
+   listen:{text:'安娜覺得這支手機很好看，可是有一點兒貴。她想後天再來看。',
+     qs:[['安娜覺得這支手機怎麼樣？','好看，可是有一點兒貴','很便宜','不好看','太小了'],['安娜什麼時候想再來？','後天','明天','前天','今天']]},
+   speak:{lines:['我覺得有一點兒累，我想回家休息。','明天我們可以一起去騎腳踏車。'],ask:'你喜歡看電影嗎？你喜歡在哪裡看？'} },
 
  /* 第 3 天：對話一＋對話二＋短文 */
- { fill:[['媽媽在＿＿做飯。','廚房','客廳','窗戶','沙發'],['我家有兩＿＿貓。','隻','張','位','杯'],['今天太陽很大，貓在外面＿＿。','曬太陽','看電視','聽音樂','找錢包'],
-         ['電視在沙發＿＿。','前面','有','在','可是'],['我們學校旁邊＿＿一家咖啡廳。','有','在','是','跟']],
-   order:[{g:'在 + Place + V',t:['媽媽','在','廚房','做飯'],a:['媽媽在廚房做飯'],end:'。'},
-          {g:'Place + 有 + N',t:['我的房間裡','有','一張','床'],a:['我的房間裡有一張床'],end:'。'}],
-   reading:{text:'王小姐的房間裡有一張床、一張桌子跟兩張椅子。窗戶旁邊有一台電視。她家有一隻狗，狗喜歡在門後面睡覺。',
-     qs:[['窗戶旁邊有什麼？','電視','床','椅子','狗'],['狗喜歡在哪裡睡覺？','門後面','床上面','窗戶旁邊','桌子下面']]},
-   listen:{text:'我家的客廳很大，客廳裡有一台電視跟兩張沙發。我的貓喜歡在窗戶前面曬太陽。',
-     qs:[['客廳裡有幾張沙發？','兩張','一張','三張','四張'],['貓喜歡在哪裡曬太陽？','窗戶前面','門後面','沙發上面','房間裡']]},
-   speak:{lines:['我的房間裡有一張床跟一張桌子。','我的貓喜歡在窗戶旁邊曬太陽。'],ask:'你家有幾個房間？你最喜歡在哪裡？'} },
+ { fill:[['我的＿＿是唱歌、跳舞。','興趣','比賽','平常','首'],['他會唱很多＿＿中文歌。','首','部','張','支'],['我＿＿早上七點起床。','平常','真','高興','興趣'],
+         ['今天下午學校有籃球＿＿，我們去看吧！','比賽','興趣','風景','電影院'],['你媽媽＿＿漂亮！','真','只','會','得']],
+   order:[{g:'O + V得',t:['中明','中文歌','唱得','很好'],a:['中明中文歌唱得很好'],end:'。'},
+          {g:'平常／有時候',t:['我','平常','喝茶，','有時候','喝咖啡'],a:['我平常喝茶，有時候喝咖啡','平常我喝茶，有時候喝咖啡'],end:'。'}],
+   reading:{text:'我有幾個好朋友，我們都喜歡唱歌、跳舞。平常大家都有一點兒忙，可是週末我們常常一起去看籃球比賽。小美跳舞跳得很好，我唱歌唱得不錯。',
+     qs:[['週末他們常常一起做什麼？','看籃球比賽','打籃球','學中文','去海邊'],['誰跳舞跳得很好？','小美','中明','宜文','友美']]},
+   listen:{text:'我弟弟的興趣是畫畫，他畫得很好。他也喜歡唱歌，可是唱得不太好。',
+     qs:[['弟弟的興趣是什麼？','畫畫','唱歌','跳舞','運動'],['弟弟唱歌唱得怎麼樣？','不太好','很好','不錯','很快']]},
+   speak:{lines:['我的興趣是聽音樂、唱歌。','我平常有一點兒忙，可是週末常常去運動。'],ask:'你的興趣是什麼？你做得怎麼樣？'} },
 
- /* 第 4 天：對話一＋對話二＋短文 */
- { fill:[['客廳裡有沙發、桌子跟椅子，＿＿很多。','家具','窗戶','太陽','門'],['我喜歡在＿＿上看書。','床','門','貓','窗戶'],['你再去房間＿＿吧。','找','跟','可是','在'],
-         ['我的錢包＿＿這裡！','在','有','是','跟'],['這家咖啡廳很不錯，我們下次＿＿來吧。','再','在','跟','可是']],
-   order:[{g:'在 + N + 方位詞',t:['貓','在','沙發','下面'],a:['貓在沙發下面'],end:'。'},
-          {g:'吧',t:['天氣很好，','我們','去外面','吧'],a:['天氣很好，我們去外面吧'],end:'！'}],
-   reading:{text:'李先生家有三隻鳥和一隻貓。鳥在客廳的窗戶前面，貓在沙發上面曬太陽。李先生不常在家，他常常去咖啡廳聽音樂。',
-     qs:[['貓在哪裡？','沙發上面','窗戶前面','門外面','廚房裡'],['李先生常常去哪裡？','咖啡廳','學校','餐廳','朋友家']]},
-   listen:{text:'哥哥在房間裡聽音樂，姐姐在廚房做飯，弟弟跟妹妹在外面玩。',
-     qs:[['姐姐在哪裡？','廚房','房間','外面','客廳'],['誰在外面玩？','弟弟跟妹妹','哥哥','姐姐','哥哥跟姐姐']]},
-   speak:{lines:['媽媽在廚房做飯。','你再去房間找吧。'],ask:'你的手機現在在哪裡？'} },
+ /* 第 4 天：L6 全課 */
+ { fill:[['天氣太熱了，我們去＿＿，好不好？','游泳','電腦','畫','比賽'],['我不會說中文，可是我＿＿說英文。','會','得','有','部'],
+         ['這裡不＿＿上網，我們去咖啡廳吧。','可以','得','真','只'],['他籃球打得＿＿？','怎麼樣','什麼','哪裡','誰'],['我現在不餓，＿＿想吃一點兒水果。','只','真','會','得']],
+   order:[{g:'V-O + V得',t:['我妹妹','跳舞','跳得','很好'],a:['我妹妹跳舞跳得很好'],end:'。'},
+          {g:'應該',t:['你','應該','常常','運動'],a:['你應該常常運動'],end:'。'}],
+   reading:{text:'王先生平常很忙，常常在家上網、看電腦。他朋友說他應該去運動。現在週末他都跟朋友去山上騎腳踏車，他覺得很有趣。',
+     qs:[['王先生平常在家做什麼？','上網、看電腦','騎腳踏車','運動','看電影'],['現在週末王先生做什麼？','去山上騎腳踏車','在家休息','去海邊游泳','去電影院']]},
+   listen:{text:'聽說明天有網球比賽，大衛很想去看。他明天有空，可以跟朋友一起去。',
+     qs:[['明天有什麼比賽？','網球','籃球','足球','棒球'],['大衛明天想做什麼？','跟朋友去看比賽','跟朋友打網球','去看電影','在家休息']]},
+   speak:{lines:['他跑步跑得很快。','聽說這部電影很有趣，我們一起去看吧。'],ask:'你覺得什麼運動很有趣？你常常做嗎？'} },
 
- /* 第 5 天：L5 ＋ L4 複習 */
- { fill:[['學校＿＿有一家很大的餐廳。','後面','可是','跟','再'],['我們一起去喝杯咖啡＿＿！','吧','嗎','呢','了'],['這張桌子一千＿＿塊錢。','多','有','在','最'],
-         ['你要喝咖啡＿＿喝茶？','還是','跟','可是','再'],['我的貓喜歡在窗戶＿＿曬太陽。','旁邊','有','在','跟']],
-   order:[{g:'Place + 有 + N',t:['學校','旁邊','有','一家','咖啡廳'],a:['學校旁邊有一家咖啡廳'],end:'。'},
-          {g:'多 (more than)',t:['這張桌子','兩千','多','塊錢'],a:['這張桌子兩千多塊錢'],end:'。'}],
-   reading:{text:'我家旁邊有一家很大的商店，那裡賣很多家具。一張桌子兩千多塊，一張椅子五百多塊。我想買一張椅子，可是我沒有錢。',
-     qs:[['一張桌子多少錢？','兩千多塊','五百多塊','兩百多塊','五千多塊'],['「我」為什麼不買椅子？','沒有錢','椅子太大','不喜歡','商店沒有椅子']]},
-   listen:{text:'這家咖啡廳的冰淇淋一個八十多塊，巧克力蛋糕一個一百五十塊。我們兩點半在咖啡廳前面見吧。',
-     qs:[['巧克力蛋糕多少錢？','一百五十塊','八十多塊','一百零五塊','五十塊'],['他們幾點在咖啡廳前面見？','兩點半','兩點','三點半','十二點半']]},
-   speak:{lines:['學校旁邊有一家咖啡廳。','那家咖啡廳的冰淇淋一個八十多塊。'],ask:'你家旁邊有什麼？'} },
+ /* 第 5 天：L5 ＋ L6 複習 */
+ { fill:[['我們在咖啡廳＿＿，好不好？','上網','游泳','踢足球','騎腳踏車'],['我的手機在桌子＿＿。','上面','有','得','會'],['學校旁邊＿＿一家電影院。','有','在','是','會'],
+         ['我哥哥在房間裡＿＿音樂。','聽','看','說','打'],['你很累，可以在沙發上＿＿。','休息','運動','跑步','比賽']],
+   order:[{g:'在 + Place + V',t:['我們','在','海邊','打球'],a:['我們在海邊打球'],end:'。'},
+          {g:'Place + 有 + N',t:['電影院','旁邊','有','一家','咖啡廳'],a:['電影院旁邊有一家咖啡廳'],end:'。'}],
+   reading:{text:'我家旁邊有一家電影院，電影院裡面有一家咖啡廳。週末我常常跟哥哥去看電影，我們都覺得那家咖啡廳的巧克力冰淇淋很好吃。',
+     qs:[['電影院在哪裡？','「我」家旁邊','學校旁邊','咖啡廳裡面','海邊'],['他們覺得什麼很好吃？','巧克力冰淇淋','蛋糕','牛肉麵','下午茶']]},
+   listen:{text:'我妹妹在客廳看電視，我弟弟在房間裡上網，我在外面騎腳踏車。',
+     qs:[['弟弟在做什麼？','上網','看電視','騎腳踏車','睡覺'],['「我」在哪裡？','外面','客廳','房間','廚房']]},
+   speak:{lines:['我常常在咖啡廳上網、看書。','我們學校旁邊有一家電影院。'],ask:'你常常在哪裡運動？'} },
 
- /* 第 6 天：L5 ＋ L4 複習 */
- { fill:[['這個房間＿＿小了！','太','很','最','有'],['桌子上面＿＿兩杯紅茶。','有','在','是','跟'],['他每天都在咖啡廳＿＿書。','看','聽','找','幫'],
-         ['18,600 怎麼說？','一萬八千六百','一萬八千零六百','一千八百六十','十八萬六千'],['我哥哥＿＿房間裡，他在客廳。','不在','沒有','不是','不要']],
-   order:[{g:'在 + Place + V',t:['我們','在','客廳','看電視','吧'],a:['我們在客廳看電視吧'],end:'。'},
-          {g:'太……了',t:['這個房間','太','小','了'],a:['這個房間太小了'],end:'！'}],
-   reading:{text:'小美跟她的姐姐一起去喝下午茶。姐姐要一杯紅茶，小美要一杯咖啡跟一個巧克力冰淇淋，一共三百八十塊。',
-     qs:[['小美跟誰去喝下午茶？','姐姐','妹妹','媽媽','朋友'],['一共多少錢？','三百八十塊','三百零八塊','三千八百塊','八十三塊']]},
-   listen:{text:'我的房間不大，可是有一個很大的窗戶。窗戶旁邊有一張桌子，我常常在那裡看書、聽音樂。',
-     qs:[['他的房間怎麼樣？','不大，可是窗戶很大','很大','沒有窗戶','很小，也沒有桌子'],['他常常在哪裡看書？','窗戶旁邊的桌子','床上','客廳','咖啡廳']]},
-   speak:{lines:['這個房間太小了！','我們在客廳看電視吧。'],ask:'介紹你的房間：房間裡有什麼？東西在哪裡？'} }
+ /* 第 6 天：L4 ～ L6 複習 */
+ { fill:[['你要看電影＿＿打球？','還是','可是','跟','得'],['今天天氣太熱＿＿！','了','吧','得','嗎'],['這支手機一萬＿＿塊錢。','多','有','在','會'],
+         ['他飯吃＿＿很多。','得','的','了','有'],['我很渴，想喝一＿＿果汁。','杯','碗','張','輛']],
+   order:[{g:'太……了',t:['這部電影','太','有趣','了'],a:['這部電影太有趣了'],end:'！'},
+          {g:'也',t:['我','會','打網球，','也','會','游泳'],a:['我會打網球，也會游泳'],end:'。'}],
+   reading:{text:'小美跟朋友去海邊游泳、曬太陽。天氣太熱了，她們都很渴。她們去一家商店，小美要一瓶水，朋友要兩杯果汁，一共一百二十塊。',
+     qs:[['小美跟朋友去哪裡玩？','海邊','山上','電影院','咖啡廳'],['一共多少錢？','一百二十塊','一百零二塊','一千二百塊','二十塊']]},
+   listen:{text:'我哥哥唱歌唱得很好，他會唱二十多首中文歌。',
+     qs:[['哥哥唱歌唱得怎麼樣？','很好','不太好','有一點兒慢','很快'],['哥哥會唱幾首中文歌？','二十多首','十多首','兩首','十二首']]},
+   speak:{lines:['你要看電影還是打球？','這部電影太有趣了！'],ask:'介紹你的興趣：你喜歡做什麼？做得怎麼樣？'} }
 ];
 
 /* ================= 工具 ================= */
@@ -235,6 +247,7 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 function rng(seedStr){let h=2166136261;for(const c of seedStr){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return()=>{h+=0x6D2B79F5;let t=h;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
 function shuffle(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function dateOf(i){const [y,m,d]=CONFIG.START_DATE.split('-').map(Number);const t=new Date(Date.UTC(y,m-1,d+i));return{iso:t.toISOString().slice(0,10),label:`${WD[t.getUTCDay()]} ${t.getUTCMonth()+1}/${t.getUTCDate()}`,short:`${t.getUTCMonth()+1}/${t.getUTCDate()}`}}
+function allDates(){return DAYS.map((_,i)=>dateOf(i).iso)}
 function dayIndexNow(){
   const shifted=new Date(Date.now()+8*3600e3-CONFIG.SWITCH_HOUR*3600e3);
   const today=Date.UTC(shifted.getUTCFullYear(),shifted.getUTCMonth(),shifted.getUTCDate());
@@ -290,7 +303,7 @@ function renderLogin(){
     if(a!==b){$('#err').textContent='The two names do not match. Please check again.';return}
     S.name=a;store.set('pr_name',a);
     if(!PREVIEW){
-      try{const r=await fetch(`${CONFIG.API_URL}?action=week&name=${encodeURIComponent(a)}`);const j=await r.json();
+      try{const r=await fetch(`${CONFIG.API_URL}?action=week&name=${encodeURIComponent(a)}&lesson=${CONFIG.LESSON}&dates=${allDates().join(',')}`);const j=await r.json();
         const rec=toMap(j);
         if(dateOf(S.day).iso in rec){S.step=6;header();app.innerHTML=`<h1>You’re done for today</h1><div class="panel"><p>${esc(a)}, today’s practice has been submitted. Today’s score: <b>${rec[dateOf(S.day).iso]}</b> / 100. New practice opens tomorrow at ${CONFIG.SWITCH_HOUR}:00 a.m.</p>${weekHTML(rec)}</div>`;return}}catch(err){}
     }
@@ -497,7 +510,7 @@ async function submit(items){
   if(PREVIEW){return renderDone(score,total,null)}
   try{
     const audios=[];for(const it of items){const b=S.recs[it.id];audios.push({label:it.label,b64:await toB64(b),mime:b.type||'audio/mpeg'})}
-    const body=JSON.stringify({name:S.name,date:dateOf(S.day).iso,lesson:CONFIG.LESSON,score,total,results:S.results,audios});
+    const body=JSON.stringify({name:S.name,date:dateOf(S.day).iso,lesson:CONFIG.LESSON,dates:allDates(),score,total,results:S.results,audios});
     const r=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
     const j=await r.json();if(!j.ok)throw new Error(j.error||'error');
     renderDone(score,total,toMap(j));
